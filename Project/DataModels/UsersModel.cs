@@ -19,6 +19,7 @@
         bool haslower = false;
         bool hasupper = false;
         bool hassymbole = false;
+        bool hasnumber = false;
         if (password.Length < 8 || password.Length > 15)
         {
             return false;
@@ -44,21 +45,37 @@
             {
                 return false;
             }
+            if ("124567890".Contains(password[i]))
+            {
+                hasnumber = true;
+            }
+            
         }
-        if (haslower && hasupper && hassymbole)
+        if (haslower && hasupper && hassymbole && hasnumber)
         {
             return true;
         }
         return false;
         }
-    public static bool Passwordvalidator()
+    public static bool UsernameValidator(string username)
     {
+
+   
+        if (username.Length < 8 || username.Length > 15)
+        {
+            return false;
+        }
+
 
         return true;
          }
-    public static bool emailvalidator()
+    public static bool EmailValidator(string email)
     {
-        return true;
+        if (email.Contains("@gmail.com"))
+        {
+            return true;
+        }
+        return false;
         }
 
     }
