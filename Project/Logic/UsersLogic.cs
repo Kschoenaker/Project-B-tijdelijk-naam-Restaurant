@@ -16,20 +16,7 @@ public class AccountsLogic
 
     }
 
-    public AccountModel CheckLogin(string email, string password)
-    {
-
-
-        AccountModel acc = _access.GetByEmail(email);
-        if (acc != null && acc.Password == password)
-        {
-            CurrentAccount = acc;
-            return acc;
-        }
-        return null;
-    }
-
-    public bool HandleCreateAccount(UsersModel account)
+    public static bool HandleCreateAccount(UsersModel account)
     {
         bool valid = true;
 
@@ -38,7 +25,7 @@ public class AccountsLogic
 
         if (valid)
         {
-            AccountsAccess.Add(account);
+            UsersAccess.Add(account);
             return true;
         }
         else
