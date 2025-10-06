@@ -28,6 +28,24 @@ public class AccountsLogic
         }
         return null;
     }
+
+    public bool HandleCreateAccount(UsersModel account)
+    {
+        bool valid = true;
+
+        // Call validators
+        // ....
+
+        if (valid)
+        {
+            AccountsAccess.Add(account);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
 
 

@@ -3,15 +3,15 @@ using Microsoft.Data.Sqlite;
 using Dapper;
 
 
-public class AccountsAccess
+public class UsersAccess
 {
     private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
 
-    private string Table = "Accounts";
+    private string Table = "Users";
 
-    public void Write(AccountModel account)
+    public void Add(AccountModel account)
     {
-        string sql = $"INSERT INTO {Table} (email, password, fullname) VALUES (@EmailAddress, @Password, @FullName)";
+        string sql = $"INSERT INTO {Table} (Name, Email, Password) VALUES (@Name, @Email, @Password)";
         _connection.Execute(sql, account);
     }
 
