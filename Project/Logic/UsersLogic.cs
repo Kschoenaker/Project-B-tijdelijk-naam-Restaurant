@@ -25,8 +25,13 @@ public class AccountsLogic
 
         if (valid)
         {
+<<<<<<< Updated upstream
             UsersAccess usersAccess = new UsersAccess();
             usersAccess.Add(account);
+=======
+            UsersAccess usersaccess = new UsersAccess();
+            usersaccess.Add(account);
+>>>>>>> Stashed changes
             return true;
         }
         else
