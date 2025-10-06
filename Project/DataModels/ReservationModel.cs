@@ -1,6 +1,6 @@
 public class ReservationModel
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public DateTime Time { get; set; }
     public int NumPeople { get; set; }
     public string Remark { get; set; }

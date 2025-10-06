@@ -1,6 +1,6 @@
 public class ThemeCalanderModel
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public DateTime ThemeDate { get; set; }
     public int Theme_ID { get; set; }
 

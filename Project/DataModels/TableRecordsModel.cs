@@ -1,6 +1,6 @@
 public class TableRecordsModel
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public int Tables_ID { get; set; }
     public int Reservation_ID { get; set; }
 
