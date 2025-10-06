@@ -1,6 +1,6 @@
 public class Tables
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public int TableSeats { get; set; }
     public string TablesName { get; set; }
 

@@ -9,28 +9,28 @@ public class UsersAccess
 
     private string Table = "Users";
 
-    public void Add(AccountModel account)
+    public void Add(UsersModel account)
     {
         string sql = $"INSERT INTO {Table} (Name, Email, Password) VALUES (@Name, @Email, @Password)";
         _connection.Execute(sql, account);
     }
 
-    public AccountModel GetByEmail(string email)
+    public UsersModel GetByEmail(string email)
     {
         string sql = $"SELECT * FROM {Table} WHERE email = @Email";
-        return _connection.QueryFirstOrDefault<AccountModel>(sql, new { Email = email });
+        return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Email = email });
     }
 
-    public void Update(AccountModel account)
+    public void Update(UsersModel account)
     {
         string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, fullname = @FullName WHERE id = @Id";
         _connection.Execute(sql, account);
     }
 
-    public void Delete(AccountModel account)
+    public void Delete(UsersModel account)
     {
         string sql = $"DELETE FROM {Table} WHERE id = @Id";
-        _connection.Execute(sql, new { Id = account.Id });
+        _connection.Execute(sql, new { Id = account.ID });
     }
 
 

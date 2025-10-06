@@ -1,6 +1,6 @@
 public class DishModel
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public int Theme_ID { get; set; }
     public string DishName { get; set; }
     public double DishPrice { get; set; }

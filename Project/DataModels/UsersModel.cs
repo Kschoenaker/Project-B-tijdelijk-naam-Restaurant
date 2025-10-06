@@ -7,7 +7,7 @@
 
     public string Name { get; set; }
 
-    public AccountModel(Int64 id, string email, string password, string name)
+    public UsersModel(Int64 id, string email, string password, string name)
     {
         ID = id;
         EmailAddress = email;

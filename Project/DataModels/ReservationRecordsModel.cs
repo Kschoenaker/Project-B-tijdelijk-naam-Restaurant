@@ -1,6 +1,6 @@
 public class ReservationRecordsModel
 {
-    public int64 ID { get; set; }
+    public int ID { get; set; }
     public int Dish_ID { get; set; }
     public int Reservation_ID { get; set; }
 
