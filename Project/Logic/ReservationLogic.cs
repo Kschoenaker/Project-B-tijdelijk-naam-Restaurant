@@ -24,9 +24,9 @@ public class ReservationLogic
 
     public static void HandleReservationForm()
     {
-        DateTime date = ReservationLogic.ReservationDaySelect();
-        DateTime time = ReservationLogic.ReservationTimeSelect();
-        //ReservationPresentaion.TableSelect(new List<Tables>());
+        DateTime date = ReservationDaySelect();
+        DateTime time = ReservationTimeSelect();
+        Tables table = ReservationTableSelect(new List<Tables>());
 
         // Add time to date
         //date.AddHours(time.Hour);
