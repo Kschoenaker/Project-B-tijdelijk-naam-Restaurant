@@ -34,6 +34,11 @@ public class AccountsLogic
             return false;
         }
     }
+
+    public static void LogOut()
+    {
+        CurrentAccount = null;
+    }
 }
 
 
