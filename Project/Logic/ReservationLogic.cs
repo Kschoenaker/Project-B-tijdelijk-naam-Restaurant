@@ -92,6 +92,7 @@ public class ReservationLogic
         DateTime selectedDate = DateTime.Today;
         int cursor = 0; // 0 = day, 1 = month, 2 = year
         ConsoleKey key;
+        bool valid = false;
 
         do
         {
@@ -134,7 +135,11 @@ public class ReservationLogic
 
                 selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
             }
-        } while (key != ConsoleKey.Enter);
+            else if (key == ConsoleKey.Enter)
+            {
+                // Validate Selection
+            }
+        } while (!valid);
 
         return selectedDate;
     }
