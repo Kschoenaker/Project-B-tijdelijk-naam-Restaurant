@@ -1,3 +1,5 @@
+using System.Runtime.ConstrainedExecution;
+
 public class ReservationPresentaion
 {
     public static void PrintDaySelectHeader()
@@ -30,5 +32,36 @@ public class ReservationPresentaion
         Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine($"   {selectedTime:HH:mm}   ");
         Console.ResetColor();
+    }
+
+    public static void PrintPeopleComingQuestion()
+    {
+        Console.WriteLine("How many people are coming?");
+    }
+
+    public static void PrintRemarkAsk()
+    {
+        Console.WriteLine("Would you like to leave a remark?");
+        Console.WriteLine("Leave it empty if not.");
+    }
+
+    public static void PrintInvalidInput()
+    {
+        Console.WriteLine("The input given is invalid");
+    }
+
+    public static void PrintReservationConfirm(ReservationModel reservation)
+    {
+        Console.WriteLine("Reservation:");
+        Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
+        Console.WriteLine($"Reservation date: {reservation.Time.ToString()}");
+
+        if (reservation.Remark is not null)
+        {
+            Console.WriteLine($"Remark: {reservation.Remark}");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Confirm? (Y/N)");
     }
 }
