@@ -1,11 +1,11 @@
 static class Menu
 {
-
     //This shows the menu. You can call back to this method to show the menu again
     //after another presentation method is completed.
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
+        ReservationLogic.HandleReservationForm();
         Console.WriteLine("Enter 1 to login");
         Console.WriteLine("Enter 2 to do something else in the future");
 
@@ -23,6 +23,5 @@ static class Menu
             Console.WriteLine("Invalid input");
             Start();
         }
-
     }
 }
