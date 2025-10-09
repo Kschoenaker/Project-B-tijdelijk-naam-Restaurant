@@ -15,7 +15,7 @@ static class Menu
                 Console.Clear();
                 PrintHeader();
 
-                Console.WriteLine("Use ⬆️/⬇️ to navigate and Enter to select option");
+                Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
 
                 for (int i = 0; i < options.Count; i++)
                 {
