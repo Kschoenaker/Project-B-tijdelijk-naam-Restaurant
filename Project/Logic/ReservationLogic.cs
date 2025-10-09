@@ -1,10 +1,10 @@
 public class ReservationLogic
 {
-    // Makes sure time stays between 17:00 and 21:00
+    // Makes sure time stays between 18:00 and 22:00
     public static DateTime AdjustTime(DateTime time, int minutes)
     {
-        DateTime startTime = DateTime.Today.AddHours(17);
-        DateTime endTime = DateTime.Today.AddHours(21);
+        DateTime startTime = DateTime.Today.AddHours(18);
+        DateTime endTime = DateTime.Today.AddHours(22);
 
         time = time.AddMinutes(minutes);
 
@@ -41,7 +41,9 @@ public class ReservationLogic
         //date.AddHours(time.Hour);
         date.AddHours(18); // Always start time at 18
 
-        ReservationModel reservation = new ReservationModel(0, date, people, remark, -1); // -1 Cause no login system yet
+        int userID = (int)AccountsLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
+        ReservationModel reservation = new ReservationModel(0, date, people, remark, userID);
+
         List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
         records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
 
@@ -54,6 +56,11 @@ public class ReservationLogic
         } while (!(input == "Y" || input == "N"));
 
         // Save reservation to database
+        ReservationAccess reservationAccess = new ReservationAccess();
+        reservationAccess.Add(reservation);
+
+        // Save table records
+        TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
     }
 
     public static int ReservationPeopleAsk()
@@ -85,6 +92,7 @@ public class ReservationLogic
         DateTime selectedDate = DateTime.Today;
         int cursor = 0; // 0 = day, 1 = month, 2 = year
         ConsoleKey key;
+        bool valid = false;
 
         do
         {
@@ -125,9 +133,13 @@ public class ReservationLogic
                         break;
                 }
 
-                selectedDate = ReservationLogic.AdjustDate(selectedDate, dayChange, monthChange, yearChange);
+                selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
             }
-        } while (key != ConsoleKey.Enter);
+            else if (key == ConsoleKey.Enter)
+            {
+                // Validate Selection
+            }
+        } while (!valid);
 
         return selectedDate;
     }
@@ -145,9 +157,9 @@ public class ReservationLogic
             key = Console.ReadKey(true).Key;
 
             if (key == ConsoleKey.UpArrow)
-                selectedTime = ReservationLogic.AdjustTime(selectedTime, +15);
+                selectedTime = AdjustTime(selectedTime, +15);
             else if (key == ConsoleKey.DownArrow)
-                selectedTime = ReservationLogic.AdjustTime(selectedTime, -15);
+                selectedTime = AdjustTime(selectedTime, -15);
 
         } while (key != ConsoleKey.Enter);
 
