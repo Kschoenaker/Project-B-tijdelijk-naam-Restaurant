@@ -65,6 +65,7 @@ public class ReservationLogic
 
     public static int ReservationPeopleAsk()
     {
+        Console.Clear();
         ReservationPresentaion.PrintPeopleComingQuestion();
         string input = Console.ReadLine();
 
