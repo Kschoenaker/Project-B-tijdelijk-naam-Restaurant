@@ -5,23 +5,24 @@ static class UserLogin
 
     public static void Start()
     {
-        Console.WriteLine("Welcome to the login page");
-        Console.WriteLine("Please enter your email address");
-        string email = Console.ReadLine();
-        Console.WriteLine("Please enter your password");
-        string password = Console.ReadLine();
-        UsersModel acc = null;
-        if (acc != null)
-        {
-            //Console.WriteLine("Welcome back " + acc.FullName);
-            //Console.WriteLine("Your email number is " + acc.EmailAddress);
+        // Console.WriteLine("Welcome to the login page");
+        // Console.WriteLine("Please enter your email address");
+        // string email = Console.ReadLine();
+        // Console.WriteLine("Please enter your password");
+        // string password = Console.ReadLine();
+        // UsersModel acc = null;
+        // if (acc != null)
+        // {
+        //     //Console.WriteLine("Welcome back " + acc.FullName);
+        //     //Console.WriteLine("Your email number is " + acc.EmailAddress);
 
-            //Write some code to go back to the menu
-            //Menu.Start();
-        }
-        else
-        {
-            Console.WriteLine("No account found with that email and password");
-        }
+        //     //Write some code to go back to the menu
+        //     //Menu.Start();
+        // }
+        // else
+        // {
+        //     Console.WriteLine("No account found with that email and password");
+        // }
+        
     }
 }
