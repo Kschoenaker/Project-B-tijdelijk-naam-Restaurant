@@ -50,6 +50,11 @@ public class ReservationPresentaion
         Console.WriteLine("The input given is invalid");
     }
 
+    public static void PrintReservationTable(TablesModel table, int counter)
+    {
+        Console.WriteLine($"{counter + 1}. {table.TablesName} (has {table.TableSeats} seats)");
+    }
+
     public static void PrintReservationConfirm(ReservationModel reservation)
     {
         Console.WriteLine("Reservation:");
@@ -63,5 +68,16 @@ public class ReservationPresentaion
 
         Console.WriteLine();
         Console.WriteLine("Confirm? (Y/N)");
+    }
+
+    public static void PrintNotEnoughSpace()
+    {
+        Console.Clear();
+        Console.WriteLine("We are so sorry, there is not enough space for you today.");
+        Console.WriteLine("Please make a new reservation with a different date, if you would still like the come.");
+        Console.WriteLine("Thank you for choosing us!");
+
+        Console.WriteLine();
+        Console.WriteLine("'Enter' to go back to main menu");
     }
 }

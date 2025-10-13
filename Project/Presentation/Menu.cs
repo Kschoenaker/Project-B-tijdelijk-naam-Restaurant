@@ -5,6 +5,9 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
+        // Add default tables when program starts
+        TableLogic.AddDefaultTables();
+
         if (AccountsLogic.CurrentAccount is null)
         {
             int selectedOption = 0;

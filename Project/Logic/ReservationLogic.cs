@@ -39,11 +39,16 @@ public class ReservationLogic
         //Commented out code, cause maybe asking for time was not needed
         //DateTime time = ReservationTimeSelect();
 
-        List<Tables> tables = new List<Tables>(); // Example tables
-        tables.Add(new Tables(1, 2, "Name1"));
-        tables.Add(new Tables(2, 2, "Name2"));
-        tables.Add(new Tables(3, 2, "Name3"));
-        Tables table = ReservationTableSelect(tables);
+        // A check to make sure that there are avialable tables
+        List<TablesModel> tables = TableLogic.GetUnreservedTablesByDate(date);
+        if (!TableLogic.IsThereTableSpace(people, tables))
+        {
+            ReservationPresentaion.PrintNotEnoughSpace();
+            Console.ReadLine();
+            return;
+        }
+
+        List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
         // Add time to date
         //date.AddHours(time.Hour);
@@ -53,7 +58,11 @@ public class ReservationLogic
         ReservationModel reservation = new ReservationModel(0, date, people, remark, userID);
 
         List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
-        records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
+        foreach (TablesModel table in selectedTables)
+        {
+            // Make a table record for each table selected
+            records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
+        }
 
         string input = "";
         do
@@ -173,11 +182,11 @@ public class ReservationLogic
         return selectedTime;
     }
 
-    public static Tables ReservationTableSelect(List<Tables> tables)
+    public static List<TablesModel> ReservationTableSelect(List<TablesModel> tables, int NumPeople)
     {
+        List<TablesModel> selectedTablesList = new();
         if (tables == null || tables.Count == 0)
         {
-            Console.WriteLine("No tables available");
             return null!;
         }
 
@@ -200,7 +209,7 @@ public class ReservationLogic
                     Console.ResetColor();
                 }
 
-                Console.WriteLine($"{i + 1}. {tables[i].TablesName}");
+                ReservationPresentaion.PrintReservationTable(tables[i], i);
             }
 
             Console.ResetColor();
@@ -219,12 +228,17 @@ public class ReservationLogic
                 if (selectedTable >= tables.Count)
                     selectedTable = 0;
             }
-
-        } while (key != ConsoleKey.Enter);
+            else if (key == ConsoleKey.Enter)
+            {
+                // Add table to selected tables and remove the table (so it can't be selected)
+                selectedTablesList.Add(tables[selectedTable]);
+                tables.RemoveAt(selectedTable);
+            }
+        } while (selectedTablesList.Sum(t => t.TableSeats) < NumPeople);
 
         Console.ResetColor();
         Console.Clear();
 
-        return tables[selectedTable];
+        return selectedTablesList;
     }
 }
