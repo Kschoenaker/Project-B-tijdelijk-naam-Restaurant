@@ -1,7 +1,7 @@
 ﻿
 
 //This class is not static so later on we can use inheritance and interfaces
-public class AccountsLogic
+public class UserLogic
 {
 
     //Static properties are shared across all instances of the class
@@ -10,10 +10,29 @@ public class AccountsLogic
     public static UsersModel? CurrentAccount { get; private set; }
     private UsersAccess _access = new();
 
-    public AccountsLogic()
+    public UserLogic()
     {
         // Could do something here
 
+    }
+
+    public static void HandleLogin()
+    {
+        // als login mogelijk is moet 
+    }
+
+    public static bool UserNameValidation(string username)
+    {
+        // if (username.Length() < 8)
+        // {
+        //     return false;
+        // }
+        return true;
+    }
+    public static bool PasswordValidation(string password)
+    {
+
+        return true;
     }
 
     public static bool HandleCreateAccount(UsersModel account)

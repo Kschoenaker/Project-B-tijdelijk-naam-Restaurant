@@ -5,7 +5,10 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
-        if (AccountsLogic.CurrentAccount is null)
+        // als login succesful -->
+
+        
+        if (UserLogic.CurrentAccount is not null)
         {
             int selectedOption = 0;
             ConsoleKey key;
@@ -66,11 +69,13 @@ static class Menu
                             break;
                     }
                 }
-            } while (AccountsLogic.CurrentAccount is null);
+            } while (UserLogic.CurrentAccount is not null);
         }
         else
         {
-            // Log in form
+            LoginForm.Start();
+            
+
         }
     }
 
@@ -79,4 +84,41 @@ static class Menu
         Console.WriteLine("Welcome the system!");
         Console.WriteLine();
     }
+
+    //public static void Login()
+    // {
+    //     var UserLogin = new UserLogin();
+
+
+    //     Console.WriteLine("And welcome to the login page");
+    //     Console.WriteLine("Please enter your username");
+
+    //     string? InpUsername = Console.ReadLine();
+    //     UserLogin.login();
+
+    //     // put in the logic to check the validation
+
+    //     Console.WriteLine("Please enter your password");
+    //     string InpPassword = Console.ReadLine();
+
+    //     // check the validation in the logic
+
+
+    //     // if account not fount --> not null 
+    //     Console.WriteLine("Could not find account");
+
+
+    //     // if account is found --> start the new code
+
+    //     // set accounf dound --> account current acount --> naar found account --> dan begint het automatisch
+
+
+    //     // vataladion password
+    //     Console.WriteLine("You did not enter a valid Password");
+    //     Console.WriteLine("You did not enter a valid Username");
+
+
+    // }
+
+
 }
