@@ -22,6 +22,14 @@ public class ReservationLogic
         return date.AddDays(dayChange).AddMonths(monthChange).AddYears(yearChange);
     }
 
+    // Makes sure that the date is not in the past
+    public static bool ValidateDate(DateTime date)
+    {
+        if (DateTime.Today > date) return false;
+
+        return true;
+    }
+
     public static void HandleReservationForm()
     {
         int people = ReservationPeopleAsk();
@@ -133,14 +141,11 @@ public class ReservationLogic
                         yearChange = direction;
                         break;
                 }
-
-                selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
+                
+                if (ValidateDate(AdjustDate(selectedDate, dayChange, monthChange, yearChange)))
+                    selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
             }
-            else if (key == ConsoleKey.Enter)
-            {
-                // Validate Selection
-            }
-        } while (!valid);
+        } while (key != ConsoleKey.Enter);
 
         return selectedDate;
     }
