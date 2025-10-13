@@ -1,5 +1,6 @@
 public class ReservationLogic
 {
+    // ------ Code for making reservations
     // Makes sure time stays between 18:00 and 22:00
     public static DateTime AdjustTime(DateTime time, int minutes)
     {
@@ -30,6 +31,20 @@ public class ReservationLogic
         return true;
     }
 
+    public static bool ValidateReservation(ReservationModel reservation)
+    {
+        // Date check (not in the past)
+        if (DateTime.Today > reservation.Time) return false;
+
+        // Num people check (can't be greater then 6)
+        if (reservation.NumPeople > 6) return false;
+
+        // Time check (inbetween 18:00 and 22:00)
+        if (!(18 < reservation.Time.Hour && reservation.Time.Hour > 22)) return false;
+
+        return true;
+    }
+
     public static void HandleReservationForm()
     {
         int people = ReservationPeopleAsk();
@@ -39,11 +54,16 @@ public class ReservationLogic
         //Commented out code, cause maybe asking for time was not needed
         //DateTime time = ReservationTimeSelect();
 
-        List<Tables> tables = new List<Tables>(); // Example tables
-        tables.Add(new Tables(1, 2, "Name1"));
-        tables.Add(new Tables(2, 2, "Name2"));
-        tables.Add(new Tables(3, 2, "Name3"));
-        Tables table = ReservationTableSelect(tables);
+        // A check to make sure that there are avialable tables
+        List<TablesModel> tables = TableLogic.GetUnreservedTablesByDate(date);
+        if (!TableLogic.IsThereTableSpace(people, tables))
+        {
+            ReservationPresentaion.PrintNotEnoughSpace();
+            Console.ReadLine();
+            return;
+        }
+
+        List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
         // Add time to date
         //date.AddHours(time.Hour);
@@ -53,7 +73,11 @@ public class ReservationLogic
         ReservationModel reservation = new ReservationModel(0, date, people, remark, userID);
 
         List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
-        records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
+        foreach (TablesModel table in selectedTables)
+        {
+            // Make a table record for each table selected
+            records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
+        }
 
         string input = "";
         do
@@ -95,7 +119,7 @@ public class ReservationLogic
         ReservationPresentaion.PrintRemarkAsk();
         return Console.ReadLine();
     }
-    
+
     public static DateTime ReservationDaySelect()
     {
         DateTime selectedDate = DateTime.Today;
@@ -141,7 +165,7 @@ public class ReservationLogic
                         yearChange = direction;
                         break;
                 }
-                
+
                 if (ValidateDate(AdjustDate(selectedDate, dayChange, monthChange, yearChange)))
                     selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
             }
@@ -173,11 +197,11 @@ public class ReservationLogic
         return selectedTime;
     }
 
-    public static Tables ReservationTableSelect(List<Tables> tables)
+    public static List<TablesModel> ReservationTableSelect(List<TablesModel> tables, int NumPeople)
     {
+        List<TablesModel> selectedTablesList = new();
         if (tables == null || tables.Count == 0)
         {
-            Console.WriteLine("No tables available");
             return null!;
         }
 
@@ -200,7 +224,7 @@ public class ReservationLogic
                     Console.ResetColor();
                 }
 
-                Console.WriteLine($"{i + 1}. {tables[i].TablesName}");
+                ReservationPresentaion.PrintReservationTable(tables[i], i);
             }
 
             Console.ResetColor();
@@ -219,12 +243,98 @@ public class ReservationLogic
                 if (selectedTable >= tables.Count)
                     selectedTable = 0;
             }
-
-        } while (key != ConsoleKey.Enter);
+            else if (key == ConsoleKey.Enter)
+            {
+                // Add table to selected tables and remove the table (so it can't be selected)
+                selectedTablesList.Add(tables[selectedTable]);
+                tables.RemoveAt(selectedTable);
+            }
+        } while (selectedTablesList.Sum(t => t.TableSeats) < NumPeople);
 
         Console.ResetColor();
         Console.Clear();
 
-        return tables[selectedTable];
+        return selectedTablesList;
+    }
+
+    //----- Code for seeing reservations
+    public static List<ReservationModel> GetReservationByUser(UsersModel user)
+    {
+        ReservationAccess reservationAccess = new ReservationAccess();
+        return reservationAccess.GetByUserID((int)user.ID);
+    }
+
+    public static void HandleSeeReservation(UsersModel user)
+    {
+        List<ReservationModel> reservations = GetReservationByUser(user);
+        if (reservations.Count > 0) return;
+
+        int selectedReservation = 0;
+        bool selectedBack = false;
+        ConsoleKey key;
+
+        do
+        {
+            Console.Clear();
+
+            for (int i = 0; i < reservations.Count + 1; i++)
+            {
+                if (i == selectedReservation)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.ResetColor();
+                }
+
+                if (reservations.Count < i)
+                {
+                    // Print back
+                    Console.WriteLine($"{i}. Back");
+                }
+                else
+                {
+                    Console.Write($"{i}. ");
+                    ReservationPresentaion.PrintReservationOneLine(reservations[i]);
+                }
+
+            }
+
+            Console.ResetColor();
+
+            key = Console.ReadKey(true).Key;
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                selectedReservation--;
+                if (selectedReservation < 0)
+                    selectedReservation = reservations.Count - 1;
+            }
+            else if (key == ConsoleKey.DownArrow)
+            {
+                selectedReservation++;
+                if (selectedReservation >= reservations.Count + 1) // + 1 for the back function
+                    selectedReservation = 0;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                if (selectedReservation > reservations.Count)
+                {
+                    selectedBack = true;
+                    return;
+                }
+                else
+                {
+                    Console.Clear();
+                    ReservationPresentaion.PrintReservation(reservations[selectedReservation]);
+                    Console.ReadLine();
+                }
+            }
+        } while (!selectedBack);
+
+        Console.ResetColor();
+        Console.Clear();
     }
 }

@@ -36,4 +36,10 @@ public class ReservationAccess
             WHERE ID = @ID";
         _connection.Execute(sql, new { reservation.ID });
     }
+
+    public List<ReservationModel> GetByUserID(int userId)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
+        return _connection.Query<ReservationModel>(sql, new { Id = userId }).ToList();
+    }
 }
