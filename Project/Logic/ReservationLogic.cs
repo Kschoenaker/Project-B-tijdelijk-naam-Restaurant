@@ -30,6 +30,20 @@ public class ReservationLogic
         return true;
     }
 
+    public static bool ValidateReservation(ReservationModel reservation)
+    {
+        // Date check (not in the past)
+        if (DateTime.Today > reservation.Time) return false;
+
+        // Num people check (can't be greater then 6)
+        if (reservation.NumPeople > 6) return false;
+
+        // Time check (inbetween 18:00 and 22:00)
+        if (!(18 < reservation.Time.Hour && reservation.Time.Hour > 22)) return false;
+
+        return true;
+    }
+
     public static void HandleReservationForm()
     {
         int people = ReservationPeopleAsk();
