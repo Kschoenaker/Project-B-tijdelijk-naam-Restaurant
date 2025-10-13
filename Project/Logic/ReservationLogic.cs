@@ -1,5 +1,6 @@
 public class ReservationLogic
 {
+    // ------ Code for making reservations
     // Makes sure time stays between 18:00 and 22:00
     public static DateTime AdjustTime(DateTime time, int minutes)
     {
@@ -118,7 +119,7 @@ public class ReservationLogic
         ReservationPresentaion.PrintRemarkAsk();
         return Console.ReadLine();
     }
-    
+
     public static DateTime ReservationDaySelect()
     {
         DateTime selectedDate = DateTime.Today;
@@ -164,7 +165,7 @@ public class ReservationLogic
                         yearChange = direction;
                         break;
                 }
-                
+
                 if (ValidateDate(AdjustDate(selectedDate, dayChange, monthChange, yearChange)))
                     selectedDate = AdjustDate(selectedDate, dayChange, monthChange, yearChange);
             }
@@ -254,5 +255,86 @@ public class ReservationLogic
         Console.Clear();
 
         return selectedTablesList;
+    }
+
+    //----- Code for seeing reservations
+    public static List<ReservationModel> GetReservationByUser(UsersModel user)
+    {
+        ReservationAccess reservationAccess = new ReservationAccess();
+        return reservationAccess.GetByUserID((int)user.ID);
+    }
+
+    public static void HandleSeeReservation(UsersModel user)
+    {
+        List<ReservationModel> reservations = GetReservationByUser(user);
+        if (reservations.Count > 0) return;
+
+        int selectedReservation = 0;
+        bool selectedBack = false;
+        ConsoleKey key;
+
+        do
+        {
+            Console.Clear();
+
+            for (int i = 0; i < reservations.Count + 1; i++)
+            {
+                if (i == selectedReservation)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else
+                {
+                    Console.ResetColor();
+                }
+
+                if (reservations.Count < i)
+                {
+                    // Print back
+                    Console.WriteLine($"{i}. Back");
+                }
+                else
+                {
+                    Console.Write($"{i}. ");
+                    ReservationPresentaion.PrintReservationOneLine(reservations[i]);
+                }
+
+            }
+
+            Console.ResetColor();
+
+            key = Console.ReadKey(true).Key;
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                selectedReservation--;
+                if (selectedReservation < 0)
+                    selectedReservation = reservations.Count - 1;
+            }
+            else if (key == ConsoleKey.DownArrow)
+            {
+                selectedReservation++;
+                if (selectedReservation >= reservations.Count + 1) // + 1 for the back function
+                    selectedReservation = 0;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                if (selectedReservation > reservations.Count)
+                {
+                    selectedBack = true;
+                    return;
+                }
+                else
+                {
+                    Console.Clear();
+                    ReservationPresentaion.PrintReservation(reservations[selectedReservation]);
+                    Console.ReadLine();
+                }
+            }
+        } while (!selectedBack);
+
+        Console.ResetColor();
+        Console.Clear();
     }
 }

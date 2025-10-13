@@ -55,16 +55,26 @@ public class ReservationPresentaion
         Console.WriteLine($"{counter + 1}. {table.TablesName} (has {table.TableSeats} seats)");
     }
 
-    public static void PrintReservationConfirm(ReservationModel reservation)
+    public static void PrintReservation(ReservationModel reservation)
     {
         Console.WriteLine("Reservation:");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
         Console.WriteLine($"Reservation date: {reservation.Time.ToString()}");
 
-        if (reservation.Remark is not null)
+        if (reservation.Remark is not null && reservation.Remark != "")
         {
             Console.WriteLine($"Remark: {reservation.Remark}");
         }
+    }
+
+    public static void PrintReservationOneLine(ReservationModel reservation)
+    {
+        Console.WriteLine($"Time: {reservation.Time.ToString()}, Number of people: {reservation.NumPeople}");
+    }
+
+    public static void PrintReservationConfirm(ReservationModel reservation)
+    {
+        PrintReservation(reservation);
 
         Console.WriteLine();
         Console.WriteLine("Confirm? (Y/N)");

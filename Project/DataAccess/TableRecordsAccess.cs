@@ -33,7 +33,6 @@ public class TableRecordsAccess
     public List<TableRecordsModel> GetByReservation(int reservationId)
     {
         string sql = $@"SELECT * FROM {Table} WHERE Reservation_ID = @Reservation_ID";
-
         var result = _connection.Query<TableRecordsModel>(sql, new { Reservation_ID = reservationId });
         return result.ToList();
     }
