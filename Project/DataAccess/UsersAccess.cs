@@ -11,8 +11,17 @@ public class UsersAccess
 
     public void Add(UsersModel account)
     {
-        string sql = $"INSERT INTO {Table} (Name, Email, Password) VALUES (@Name, @Email, @Password)";
-        _connection.Execute(sql, account);
+        _connection.Open();
+
+        // Insert the row and get the generated ID
+        string sql = $@"
+            INSERT INTO {Table} (Name, Email, Password) 
+            VALUES (@Name, @Email, @Password);
+            SELECT last_insert_rowid();";
+
+        // ExecuteScalar returns the new ID
+        account.ID = _connection.ExecuteScalar<int>(sql, account);
+        Console.WriteLine(account.ID);
     }
 
     public UsersModel GetByEmail(string email)
@@ -32,6 +41,13 @@ public class UsersAccess
         string sql = $"DELETE FROM {Table} WHERE id = @Id";
         _connection.Execute(sql, new { Id = account.ID });
     }
+
+    public UsersModel GetByLogIn(string username, string password)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE name = @Name AND password = @Password";
+        return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Name = username, Password = password });
+    }
+
 
 
 

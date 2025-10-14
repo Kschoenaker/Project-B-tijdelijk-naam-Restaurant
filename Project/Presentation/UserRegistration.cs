@@ -21,7 +21,7 @@ static class UserRegistration
                 break;
             }
             Console.WriteLine("Invalid ussername");
-            }
+        }
 
 
         while (true)
@@ -37,11 +37,11 @@ static class UserRegistration
             Console.WriteLine("Invalid password");
 
         }
-            
+
 
         while (true)
         {
-        Console.WriteLine("Please enter your email ( @gmail.com)");
+            Console.WriteLine("Please enter your email ( @gmail.com)");
             email = Console.ReadLine();
             if (UsersModel.EmailValidator(email))
             {
@@ -49,7 +49,11 @@ static class UserRegistration
             }
             Console.WriteLine("Invalid email");
 
-        } 
+
+        }
+
+        RegistrationLogic.MakeAccount(ussername, password, email);
 
     }
+    
 }
