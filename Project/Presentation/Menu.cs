@@ -147,6 +147,7 @@ static class Menu
                     case 1:
                         // See reservations
                         Console.WriteLine("go to regester");
+                        UserRegistration.Start();
                         break;
                 }
             }
