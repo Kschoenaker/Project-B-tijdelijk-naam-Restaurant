@@ -1,4 +1,4 @@
-static class Registration
+static class UserRegistration
 {
 
 
