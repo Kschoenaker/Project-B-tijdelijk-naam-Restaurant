@@ -67,7 +67,7 @@ static class Menu
                             ReservationLogic.HandleReservationForm();
                             break;
                         case 1:
-                            // See reservations
+                            ReservationLogic.HandleSeeReservation(AccountsLogic.CurrentAccount);
                             break;
                         case 2:
                             UserLogic.LogOut();
