@@ -65,15 +65,18 @@ static class Menu
                             ReservationLogic.HandleSeeReservation(AccountsLogic.CurrentAccount);
                             break;
                         case 2:
-                            AccountsLogic.LogOut();
+                            UserLogic.LogOut();
                             break;
                     }
                 }
-            } while (AccountsLogic.CurrentAccount is null);
+            } while (UserLogic.CurrentAccount is not null);
         }
         else
-        {
-            // Log in form
+        {   
+
+            LoginForm.Start();
+            
+
         }
     }
 
@@ -82,4 +85,76 @@ static class Menu
         Console.WriteLine("Welcome the system!");
         Console.WriteLine();
     }
+
+    public static void PreStart()
+    {
+        Console.WriteLine("try");
+        int selectOption = 0;
+        ConsoleKey key;
+        List<string> preStartOptions = new List<string>(["Log in", "Rigester"]);
+
+        do
+        {
+            Console.Clear();
+            PrintHeader();
+
+            Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
+
+
+            for (int i = 0; i < preStartOptions.Count; i++)
+            {
+                // Colors
+                if (i == selectOption)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
+
+                Console.WriteLine(preStartOptions[i]);
+            }
+
+            Console.ResetColor();
+
+            key = Console.ReadKey(true).Key;
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                selectOption--;
+                if (selectOption < 0)
+                    selectOption = preStartOptions.Count - 1;
+            }
+            else if (key == ConsoleKey.DownArrow)
+            {
+                selectOption++;
+                if (selectOption >= preStartOptions.Count)
+                    selectOption = 0;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                //Switch for the methodes
+                switch (selectOption)
+                {
+                    case 0:
+                        Console.WriteLine("go to log in");
+                        LoginForm.Start();
+                        break;
+                    case 1:
+                        // See reservations
+                        Console.WriteLine("go to regester");
+                        break;
+                }
+            }
+        } while (UserLogic.CurrentAccount is null);
+
+
+
+
+    }
+
+
 }
