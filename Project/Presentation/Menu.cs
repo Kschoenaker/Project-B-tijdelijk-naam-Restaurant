@@ -5,13 +5,16 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
-        // als login succesful -->
-
+        // als login succesful -->cd Pr
+        // login in regestration -->
         if (UserLogic.CurrentAccount is null)
         {
-            LoginForm.Start();
-
+            PreStart();
+            
         }
+
+
+
         
         if (UserLogic.CurrentAccount is not null)
         {
@@ -77,7 +80,8 @@ static class Menu
             } while (UserLogic.CurrentAccount is not null);
         }
         else
-        {
+        {   
+
             LoginForm.Start();
             
 
@@ -90,40 +94,75 @@ static class Menu
         Console.WriteLine();
     }
 
-    //public static void Login()
-    // {
-    //     var UserLogin = new UserLogin();
+    public static void PreStart()
+    {
+        Console.WriteLine("try");
+        int selectOption = 0;
+        ConsoleKey key;
+        List<string> preStartOptions = new List<string>(["Log in", "Rigester"]);
+
+        do
+        {
+            Console.Clear();
+            PrintHeader();
+
+            Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
 
 
-    //     Console.WriteLine("And welcome to the login page");
-    //     Console.WriteLine("Please enter your username");
+            for (int i = 0; i < preStartOptions.Count; i++)
+            {
+                // Colors
+                if (i == selectOption)
+                {
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = ConsoleColor.Black;
+                }
 
-    //     string? InpUsername = Console.ReadLine();
-    //     UserLogin.login();
+                Console.WriteLine(preStartOptions[i]);
+            }
 
-    //     // put in the logic to check the validation
+            Console.ResetColor();
 
-    //     Console.WriteLine("Please enter your password");
-    //     string InpPassword = Console.ReadLine();
+            key = Console.ReadKey(true).Key;
 
-    //     // check the validation in the logic
+            if (key == ConsoleKey.UpArrow)
+            {
+                selectOption--;
+                if (selectOption < 0)
+                    selectOption = preStartOptions.Count - 1;
+            }
+            else if (key == ConsoleKey.DownArrow)
+            {
+                selectOption++;
+                if (selectOption >= preStartOptions.Count)
+                    selectOption = 0;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                //Switch for the methodes
+                switch (selectOption)
+                {
+                    case 0:
+                        Console.WriteLine("go to log in");
+                        LoginForm.Start();
+                        break;
+                    case 1:
+                        // See reservations
+                        Console.WriteLine("go to regester");
+                        break;
+                }
+            }
+        } while (UserLogic.CurrentAccount is null);
 
 
-    //     // if account not fount --> not null 
-    //     Console.WriteLine("Could not find account");
 
 
-    //     // if account is found --> start the new code
-
-    //     // set accounf dound --> account current acount --> naar found account --> dan begint het automatisch
-
-
-    //     // vataladion password
-    //     Console.WriteLine("You did not enter a valid Password");
-    //     Console.WriteLine("You did not enter a valid Username");
-
-
-    // }
+    }
 
 
 }

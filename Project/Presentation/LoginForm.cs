@@ -1,7 +1,14 @@
+using System.ComponentModel.Design;
+
 static class LoginForm
 {
     public static void Start()
     {
+        Console.Clear();
+        Menu.PrintHeader();
+        Console.WriteLine("username");
+
+
 
         bool NotLoggedIn = true;
         while (NotLoggedIn)
@@ -33,6 +40,7 @@ static class LoginForm
                 Console.WriteLine("Needs to be at least 8 charachters");
                 Console.WriteLine("Should contain a capatal letter");
                 Console.WriteLine("Should contain a number");
+                
             }
 
         }
