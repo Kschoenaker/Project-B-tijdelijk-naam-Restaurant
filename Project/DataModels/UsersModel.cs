@@ -1,19 +1,20 @@
-﻿    public class UsersModel
+﻿using System.ComponentModel;
+
+public class UsersModel
+{
+    public Int64 ID { get; set; }
+    public string Email { get; set; }
+
+    public string Password { get; set; }
+    public string Name { get; set; }
+
+    public UsersModel(Int64 id, string email, string password, string name)
     {
-        public Int64 ID { get; set; }
-        public string EmailAddress { get; set; }
-
-        public string Password { get; set; }
-
-        public string Name { get; set; }
-
-        public UsersModel(Int64 id, string email, string password, string name)
-        {
-            ID = id;
-            EmailAddress = email;
-            Password = password;
-            Name = name;
-        }
+        ID = id;
+        Email = email;
+        Password = password;
+        Name = name;
+    }
     public static bool PasswordValidator(string password)
     {
         bool haslower = false;
@@ -49,18 +50,18 @@
             {
                 hasnumber = true;
             }
-            
+
         }
         if (haslower && hasupper && hassymbole && hasnumber)
         {
             return true;
         }
         return false;
-        }
+    }
     public static bool UsernameValidator(string username)
     {
 
-   
+
         if (username.Length < 8 || username.Length > 15)
         {
             return false;
@@ -68,7 +69,7 @@
 
 
         return true;
-         }
+    }
     public static bool EmailValidator(string email)
     {
         if (email.Contains("@gmail.com"))
@@ -76,6 +77,32 @@
             return true;
         }
         return false;
+    }
+
+    // public static bool HandleCreateAccount(UsersModel user)
+    // {
+    //     if (DuplicateAccount(user) == false)
+    //     {
+    //         CreateAccount(user);
+    //         return true;
+    //     }
+    //     return false;
+
+
+
+
+    // }
+
+    public static bool DuplicateAccount(UsersModel user)
+    {
+        UsersAccess access = new();
+
+        if (access.GetByLogIn(user.Name, user.Password) is not null)
+        {
+            return false;
         }
 
+        return true;
+
     }
+}
