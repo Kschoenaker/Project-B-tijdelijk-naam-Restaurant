@@ -7,8 +7,9 @@ static class Menu
     {
         // Add default tables when program starts
         TableLogic.AddDefaultTables();
+        PreStart();
 
-        if (AccountsLogic.CurrentAccount is null)
+        if (UserLogic.CurrentAccount is null)
         {
             int selectedOption = 0;
             ConsoleKey key;
@@ -62,7 +63,7 @@ static class Menu
                             ReservationLogic.HandleReservationForm();
                             break;
                         case 1:
-                            ReservationLogic.HandleSeeReservation(AccountsLogic.CurrentAccount);
+                            ReservationLogic.HandleSeeReservation(UserLogic.CurrentAccount);
                             break;
                         case 2:
                             UserLogic.LogOut();
