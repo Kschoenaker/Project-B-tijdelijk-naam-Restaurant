@@ -5,18 +5,10 @@ static class Menu
     //You could edit this to show different menus depending on the user's role
     static public void Start()
     {
-        // als login succesful -->cd Pr
-        // login in regestration -->
-        if (UserLogic.CurrentAccount is null)
-        {
-            PreStart();
-            
-        }
+        // Add default tables when program starts
+        TableLogic.AddDefaultTables();
 
-
-
-        
-        if (UserLogic.CurrentAccount is not null)
+        if (AccountsLogic.CurrentAccount is null)
         {
             int selectedOption = 0;
             ConsoleKey key;
@@ -70,7 +62,7 @@ static class Menu
                             ReservationLogic.HandleReservationForm();
                             break;
                         case 1:
-                            // See reservations
+                            ReservationLogic.HandleSeeReservation(AccountsLogic.CurrentAccount);
                             break;
                         case 2:
                             UserLogic.LogOut();

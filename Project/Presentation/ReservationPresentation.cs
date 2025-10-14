@@ -50,18 +50,44 @@ public class ReservationPresentaion
         Console.WriteLine("The input given is invalid");
     }
 
-    public static void PrintReservationConfirm(ReservationModel reservation)
+    public static void PrintReservationTable(TablesModel table, int counter)
+    {
+        Console.WriteLine($"{counter + 1}. {table.TablesName} (has {table.TableSeats} seats)");
+    }
+
+    public static void PrintReservation(ReservationModel reservation)
     {
         Console.WriteLine("Reservation:");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
         Console.WriteLine($"Reservation date: {reservation.Time.ToString()}");
 
-        if (reservation.Remark is not null)
+        if (reservation.Remark is not null && reservation.Remark != "")
         {
             Console.WriteLine($"Remark: {reservation.Remark}");
         }
+    }
+
+    public static void PrintReservationOneLine(ReservationModel reservation)
+    {
+        Console.WriteLine($"Time: {reservation.Time.ToString()}, Number of people: {reservation.NumPeople}");
+    }
+
+    public static void PrintReservationConfirm(ReservationModel reservation)
+    {
+        PrintReservation(reservation);
 
         Console.WriteLine();
         Console.WriteLine("Confirm? (Y/N)");
+    }
+
+    public static void PrintNotEnoughSpace()
+    {
+        Console.Clear();
+        Console.WriteLine("We are so sorry, there is not enough space for you today.");
+        Console.WriteLine("Please make a new reservation with a different date, if you would still like the come.");
+        Console.WriteLine("Thank you for choosing us!");
+
+        Console.WriteLine();
+        Console.WriteLine("'Enter' to go back to main menu");
     }
 }
