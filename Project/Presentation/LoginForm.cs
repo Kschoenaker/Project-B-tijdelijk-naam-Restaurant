@@ -1,42 +1,42 @@
 static class LoginForm
 {
-        public static void Start()  
+    public static void Start()
     {
-        Console.WriteLine("And welcome to the login page");
-        Console.WriteLine("Please enter your username");
 
-        string? InpUsername = Console.ReadLine();
+        bool NotLoggedIn = true;
+        while (NotLoggedIn)
+        {
+            Console.WriteLine("username");
+            string? UserName = Console.ReadLine();
 
-        
-
-        // put in the logic to check the validation
-
-        Console.WriteLine("Please enter your password");
-        string InpPassword = Console.ReadLine();
-
-        // check the validation in the logic
+            Console.WriteLine("password");
+            string? PassWord = Console.ReadLine();
+            Console.WriteLine("");
 
 
-        // if account not fount --> not null 
-        Console.WriteLine("Could not find account");
+            if (UserLogic.UsernameVal(UserName) && UserLogic.PasswordVal(PassWord))
+            {
+                // find if the account is in the build
+                if (UserLogic.HandleLogin(UserName, PassWord))
+                {
 
+                    Console.WriteLine("Could not find account");
+                    NotLoggedIn = false;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Username");
+                Console.WriteLine("Needs to be at least 8 charachters");
+                Console.WriteLine("");
+                Console.WriteLine("Password");
+                Console.WriteLine("Needs to be at least 8 charachters");
+                Console.WriteLine("Should contain a capatal letter");
+                Console.WriteLine("Should contain a number");
+            }
 
-        // if account is found --> start the new code
-
-        // set accounf dound --> account current acount --> naar found account --> dan begint het automatisch
-
-
-        // vataladion password
-        Console.WriteLine("You did not enter a valid Password");
-        Console.WriteLine("You did not enter a valid Username");
-
-        Console.WriteLine("No account found with that email and password");
-
-        // UsersModel acc = null;
-        // if (acc != null)
-
-
+        }
     }
-    
-
 }
+
+

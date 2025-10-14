@@ -7,6 +7,11 @@ static class Menu
     {
         // als login succesful -->
 
+        if (UserLogic.CurrentAccount is null)
+        {
+            LoginForm.Start();
+
+        }
         
         if (UserLogic.CurrentAccount is not null)
         {
@@ -65,7 +70,7 @@ static class Menu
                             // See reservations
                             break;
                         case 2:
-                            AccountsLogic.LogOut();
+                            UserLogic.LogOut();
                             break;
                     }
                 }

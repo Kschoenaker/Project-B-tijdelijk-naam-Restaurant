@@ -33,6 +33,13 @@ public class UsersAccess
         _connection.Execute(sql, new { Id = account.ID });
     }
 
+    public UsersModel GetByLogIn(string username, string password)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE name = @Name AND password = @Password";
+        return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Name = username, Password = password });
+    }
+
+
 
 
 }

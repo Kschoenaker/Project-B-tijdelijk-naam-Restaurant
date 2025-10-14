@@ -49,7 +49,7 @@ public class ReservationLogic
         //date.AddHours(time.Hour);
         date.AddHours(18); // Always start time at 18
 
-        int userID = (int)AccountsLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
+        int userID = (int)UserLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
         ReservationModel reservation = new ReservationModel(0, date, people, remark, userID);
 
         List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
