@@ -8,6 +8,8 @@ public class UsersModel
     public string Password { get; set; }
     public string Name { get; set; }
 
+    public UsersModel() { }
+
     public UsersModel(Int64 id, string email, string password, string name)
     {
         ID = id;

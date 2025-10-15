@@ -42,4 +42,10 @@ public class ReservationAccess
         string sql = $"SELECT * FROM {Table} WHERE id = @Id";
         return _connection.Query<ReservationModel>(sql, new { Id = userId }).ToList();
     }
+
+    public int GetLastInsertedId()
+    {
+        string sql = "SELECT last_insert_rowid();";
+        return _connection.ExecuteScalar<int>(sql);
+    }
 }

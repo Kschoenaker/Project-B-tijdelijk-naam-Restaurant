@@ -4,11 +4,10 @@ public static class RegistrationLogic
 
 
 
-    public static void MakeAccount(string username, string password, string email)
+    public static void MakeAccount(UsersModel user)
     {
 
         UsersAccess access = new();
-        UsersModel user = new(0, email, password, username);
         access.Add(user);
         Console.WriteLine("Account is made");
     }

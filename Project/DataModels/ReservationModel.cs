@@ -6,6 +6,8 @@ public class ReservationModel
     public string Remark { get; set; }
     public int Users_ID { get; set; }
 
+    public ReservationModel() { }
+
     public ReservationModel(int id, DateTime time, int numPeople, string remark, int users_ID)
     {
         ID = id;

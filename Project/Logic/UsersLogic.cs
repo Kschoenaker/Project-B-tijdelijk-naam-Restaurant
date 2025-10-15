@@ -17,7 +17,12 @@ public class UserLogic // alle logic layer moet static zijn --> hoeft er geen in
     public UsersAccess Access
     {
         get { return _access; }
-        set{ _access = value; }
+        set { _access = value; }
+    }
+    
+    public static bool HandleLogin(UsersModel user)
+    {
+        return HandleLogin(user.Name, user.Password);
     }
 
     public static bool HandleLogin(string username, string password)
@@ -25,7 +30,6 @@ public class UserLogic // alle logic layer moet static zijn --> hoeft er geen in
         // als login mogelijk is moet
         // kijken of de login in de database staat
         {
-            Console.WriteLine("find the account in the database");
             var user = _access.GetByLogIn(username, password);
 
             if (user != null)

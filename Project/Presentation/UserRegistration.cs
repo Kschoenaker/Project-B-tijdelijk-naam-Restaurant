@@ -4,8 +4,9 @@ static class UserRegistration
 
     public static void Start()
     {
+        Console.Clear();
 
-        string ussername, password, email;
+        string username, password, email;
 
         Console.WriteLine("Registration:");
         Console.WriteLine("---------------------------------------------------------");
@@ -15,8 +16,8 @@ static class UserRegistration
         {
             Console.WriteLine("Please enter your username ");
             Console.WriteLine("Must be 8-15 characters long");
-            ussername = Console.ReadLine();
-            if (UsersModel.UsernameValidator(ussername))
+            username = Console.ReadLine();
+            if (UsersModel.UsernameValidator(username))
             {
                 break;
             }
@@ -51,9 +52,9 @@ static class UserRegistration
 
 
         }
-
-        RegistrationLogic.MakeAccount(ussername, password, email);
-
+        UsersModel user = new(0, email, password, username);
+        RegistrationLogic.MakeAccount(user);
+        UserLogic.HandleLogin(user);
     }
     
 }

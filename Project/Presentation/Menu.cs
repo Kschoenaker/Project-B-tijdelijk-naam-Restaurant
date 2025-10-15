@@ -7,77 +7,81 @@ static class Menu
     {
         // Add default tables when program starts
         TableLogic.AddDefaultTables();
-        PreStart();
 
-        if (UserLogic.CurrentAccount is null)
+        int selectedOption = 0;
+        ConsoleKey key;
+        List<string> options = new List<string>(["Make reservation", "See reservation", "Log out", "Exit"]);
+
+        bool runCode = true;
+        while (runCode)
         {
-            int selectedOption = 0;
-            ConsoleKey key;
-            List<string> options = new List<string>(["Make reservation", "See reservation", "Log out"]);
-            do
+            if (UserLogic.CurrentAccount is not null)
             {
-                Console.Clear();
-                PrintHeader();
-
-                Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
-
-                for (int i = 0; i < options.Count; i++)
+                do
                 {
-                    // Colors
-                    if (i == selectedOption)
+                    Console.Clear();
+                    PrintHeader();
+
+                    Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
+
+                    for (int i = 0; i < options.Count; i++)
                     {
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.BackgroundColor = ConsoleColor.White;
+                        // Colors
+                        if (i == selectedOption)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.BackgroundColor = ConsoleColor.White;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = ConsoleColor.Black;
+                        }
+
+                        Console.WriteLine(options[i]);
                     }
-                    else
+
+                    Console.ResetColor();
+
+                    key = Console.ReadKey(true).Key;
+
+                    if (key == ConsoleKey.UpArrow)
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.BackgroundColor = ConsoleColor.Black;
+                        selectedOption--;
+                        if (selectedOption < 0)
+                            selectedOption = options.Count - 1;
                     }
-
-                    Console.WriteLine(options[i]);
-                }
-
-                Console.ResetColor();
-
-                key = Console.ReadKey(true).Key;
-
-                if (key == ConsoleKey.UpArrow)
-                {
-                    selectedOption--;
-                    if (selectedOption < 0)
-                        selectedOption = options.Count - 1;
-                }
-                else if (key == ConsoleKey.DownArrow)
-                {
-                    selectedOption++;
-                    if (selectedOption >= options.Count)
-                        selectedOption = 0;
-                }
-                else if (key == ConsoleKey.Enter)
-                {
-                    //Switch for the methodes
-                    switch (selectedOption)
+                    else if (key == ConsoleKey.DownArrow)
                     {
-                        case 0:
-                            ReservationLogic.HandleReservationForm();
-                            break;
-                        case 1:
-                            ReservationLogic.HandleSeeReservation(UserLogic.CurrentAccount);
-                            break;
-                        case 2:
-                            UserLogic.LogOut();
-                            break;
+                        selectedOption++;
+                        if (selectedOption >= options.Count)
+                            selectedOption = 0;
                     }
-                }
-            } while (UserLogic.CurrentAccount is not null);
-        }
-        else
-        {   
-
-            LoginForm.Start();
-            
-
+                    else if (key == ConsoleKey.Enter)
+                    {
+                        //Switch for the methodes
+                        switch (selectedOption)
+                        {
+                            case 0:
+                                ReservationLogic.HandleReservationForm();
+                                break;
+                            case 1:
+                                ReservationLogic.HandleSeeReservation(UserLogic.CurrentAccount);
+                                break;
+                            case 2:
+                                UserLogic.LogOut();
+                                break;
+                            case 3:
+                                runCode = false;
+                                break;
+                        }
+                    }
+                } while (UserLogic.CurrentAccount is not null);
+            }
+            else
+            {
+                PreStart();
+            }
         }
     }
 
@@ -89,10 +93,9 @@ static class Menu
 
     public static void PreStart()
     {
-        Console.WriteLine("try");
         int selectOption = 0;
         ConsoleKey key;
-        List<string> preStartOptions = new List<string>(["Log in", "Rigester"]);
+        List<string> preStartOptions = new List<string>(["Log in", "Register"]);
 
         do
         {
@@ -141,12 +144,12 @@ static class Menu
                 switch (selectOption)
                 {
                     case 0:
-                        Console.WriteLine("go to log in");
+                        Console.WriteLine("Go to log in");
                         LoginForm.Start();
                         break;
                     case 1:
                         // See reservations
-                        Console.WriteLine("go to regester");
+                        Console.WriteLine("Go to register");
                         UserRegistration.Start();
                         break;
                 }

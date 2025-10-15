@@ -72,13 +72,6 @@ public class ReservationLogic
         int userID = (int)UserLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
         ReservationModel reservation = new ReservationModel(0, date, people, remark, userID);
 
-        List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
-        foreach (TablesModel table in selectedTables)
-        {
-            // Make a table record for each table selected
-            records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
-        }
-
         string input = "";
         do
         {
@@ -90,6 +83,16 @@ public class ReservationLogic
         // Save reservation to database
         ReservationAccess reservationAccess = new ReservationAccess();
         reservationAccess.Add(reservation);
+
+        int newReservationId = reservationAccess.GetLastInsertedId(); // Get new id
+        reservation.ID = newReservationId;
+
+        List<TableRecordsModel> records = new List<TableRecordsModel>(); // Code for future for selecting multiple tables
+        foreach (TablesModel table in selectedTables)
+        {
+            // Make a table record for each table selected
+            records.Add(new TableRecordsModel(0, table.ID, reservation.ID));
+        }
 
         // Save table records
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
@@ -266,8 +269,16 @@ public class ReservationLogic
 
     public static void HandleSeeReservation(UsersModel user)
     {
+        Console.Clear();
+
         List<ReservationModel> reservations = GetReservationByUser(user);
-        if (reservations.Count > 0) return;
+        if (reservations.Count <= 0)
+        {
+            Console.WriteLine("You don't have any reservations");
+            Console.WriteLine("Press enter to go back to the main menu");
+            Console.ReadLine();
+            return;
+        }
 
         int selectedReservation = 0;
         bool selectedBack = false;
@@ -289,14 +300,14 @@ public class ReservationLogic
                     Console.ResetColor();
                 }
 
-                if (reservations.Count < i)
+                if (reservations.Count <= i)
                 {
                     // Print back
-                    Console.WriteLine($"{i}. Back");
+                    Console.WriteLine($"Back");
                 }
                 else
                 {
-                    Console.Write($"{i}. ");
+                    Console.Write($"{i + 1}. ");
                     ReservationPresentaion.PrintReservationOneLine(reservations[i]);
                 }
 
@@ -320,7 +331,7 @@ public class ReservationLogic
             }
             else if (key == ConsoleKey.Enter)
             {
-                if (selectedReservation > reservations.Count)
+                if (selectedReservation >= reservations.Count)
                 {
                     selectedBack = true;
                     return;

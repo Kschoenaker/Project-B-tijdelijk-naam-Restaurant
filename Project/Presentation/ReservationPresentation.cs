@@ -59,7 +59,7 @@ public class ReservationPresentaion
     {
         Console.WriteLine("Reservation:");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
-        Console.WriteLine($"Reservation date: {reservation.Time.ToString()}");
+        Console.WriteLine($"Reservation date: {reservation.Time.ToString("dd/MM/yyyy")}");
 
         if (reservation.Remark is not null && reservation.Remark != "")
         {

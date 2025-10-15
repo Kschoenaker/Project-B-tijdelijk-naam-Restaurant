@@ -4,6 +4,8 @@ public class ReservationRecordsModel
     public int Dish_ID { get; set; }
     public int Reservation_ID { get; set; }
 
+    public ReservationRecordsModel() { }
+
     public ReservationRecordsModel(int id, int dish_ID, int reservation_ID)
     {
         ID = id;

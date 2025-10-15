@@ -6,39 +6,42 @@ static class LoginForm
     {
         Console.Clear();
         Menu.PrintHeader();
-        Console.WriteLine("username");
-
-
 
         bool NotLoggedIn = true;
         while (NotLoggedIn)
         {
-            Console.WriteLine("username");
+            Console.WriteLine("Enter username:");
             string? UserName = Console.ReadLine();
 
-            Console.WriteLine("password");
+            Console.WriteLine();
+
+            Console.WriteLine("Enter password:");
             string? PassWord = Console.ReadLine();
             Console.WriteLine("");
-
 
             if (UserLogic.UsernameVal(UserName) && UserLogic.PasswordVal(PassWord))
             {
                 // find if the account is in the build
                 if (UserLogic.HandleLogin(UserName, PassWord))
                 {
-
-                    Console.WriteLine("Could not find account");
+                    // Log in valid
                     NotLoggedIn = false;
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Could not find account. Try again.");
+                    Console.WriteLine();
                 }
             }
             else
             {
                 Console.WriteLine("Username");
-                Console.WriteLine("Needs to be at least 8 charachters");
+                Console.WriteLine("Needs to be at least 8 characters");
                 Console.WriteLine("");
                 Console.WriteLine("Password");
-                Console.WriteLine("Needs to be at least 8 charachters");
-                Console.WriteLine("Should contain a capatal letter");
+                Console.WriteLine("Needs to be at least 8 characters");
+                Console.WriteLine("Should contain a capital letter");
                 Console.WriteLine("Should contain a number");
                 
             }
