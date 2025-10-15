@@ -81,20 +81,6 @@ public class UsersModel
         return false;
     }
 
-    // public static bool HandleCreateAccount(UsersModel user)
-    // {
-    //     if (DuplicateAccount(user) == false)
-    //     {
-    //         CreateAccount(user);
-    //         return true;
-    //     }
-    //     return false;
-
-
-
-
-    // }
-
     public static bool DuplicateAccount(UsersModel user)
     {
         UsersAccess access = new();
