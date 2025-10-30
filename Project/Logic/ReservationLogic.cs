@@ -49,10 +49,8 @@ public class ReservationLogic
     {
         int people = ReservationPeopleAsk();
         DateTime date = ReservationDaySelect();
+        DateTime time = ReservationTimeSelect();
         string? remark = ReservationMarkAsk();
-
-        //Commented out code, cause maybe asking for time was not needed
-        //DateTime time = ReservationTimeSelect();
 
         // A check to make sure that there are avialable tables
         List<TablesModel> tables = TableLogic.GetUnreservedTablesByDate(date);
@@ -66,8 +64,7 @@ public class ReservationLogic
         List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
         // Add time to date
-        //date.AddHours(time.Hour);
-        date.AddHours(18); // Always start time at 18
+        date.AddHours(time.Hour);
 
         int userID = (int)UserLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
         ReservationModel reservation = new ReservationModel(0, date, people, remark, "Active", userID);
