@@ -65,6 +65,7 @@ public class ReservationLogic
 
         // Add time to date
         date.AddHours(time.Hour);
+        date.AddMinutes(time.Minute);
 
         int userID = (int)UserLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
         ReservationModel reservation = new ReservationModel(0, date, people, remark, "Active", userID);
