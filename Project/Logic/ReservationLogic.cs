@@ -297,7 +297,7 @@ public class ReservationLogic
             List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
             tablesDict.Add(i, tablesForReservation);
 
-            UsersModel reservationUser = UserLogic.GetUserID(reservations[i].Users_ID);
+            UsersModel reservationUser = UserLogic.GetUserByID(reservations[i].Users_ID);
             usersDict.Add(i, reservationUser);
         }
 
