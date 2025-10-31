@@ -58,8 +58,14 @@ public class ReservationPresentaion
     public static void PrintReservation(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
     {
         Console.WriteLine("Reservation:");
+        Console.WriteLine($"Name: {user.Name}.");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
         Console.WriteLine($"Reservation date: {reservation.Time.ToString("dd/MM/yyyy")}");
+
+        string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
+        tableList = TrimToLength(tableList, 12);
+
+        Console.WriteLine($"Tables {tableList}.");
 
         if (reservation.Remark is not null && reservation.Remark != "")
         {
