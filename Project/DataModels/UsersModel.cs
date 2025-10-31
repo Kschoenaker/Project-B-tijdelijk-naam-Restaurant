@@ -64,7 +64,7 @@ public class UsersModel
     {
 
 
-        if (username.Length < 8 || username.Length > 15)
+        if (username.Length < 4 || username.Length > 15)
         {
             return false;
         }
