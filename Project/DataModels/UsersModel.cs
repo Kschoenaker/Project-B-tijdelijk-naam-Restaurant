@@ -74,7 +74,7 @@ public class UsersModel
     }
     public static bool EmailValidator(string email)
     {
-        if (email.Contains("@gmail.com"))
+        if (email.EndsWith("@gmail.com"))
         {
             return true;
         }

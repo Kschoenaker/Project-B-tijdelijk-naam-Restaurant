@@ -12,8 +12,8 @@ public class ReservationAccess
     public void Add(ReservationModel reservation)
     {
         string sql = $@"
-            INSERT INTO {Table} (Time, NumPeople, Remark, Users_ID)
-            VALUES (@Time, @NumPeople, @Remark, @Users_ID)";
+            INSERT INTO {Table} (Time, NumPeople, Remark, Status, Users_ID)
+            VALUES (@Time, @NumPeople, @Remark, @Status, @Users_ID)";
         _connection.Execute(sql, reservation);
     }
 
@@ -24,6 +24,7 @@ public class ReservationAccess
             SET Time = @Time,
                 NumPeople = @NumPeople,
                 Remark = @Remark,
+                Status = @Status,
                 Users_ID = @Users_ID
             WHERE ID = @ID";
         _connection.Execute(sql, reservation);
@@ -39,8 +40,8 @@ public class ReservationAccess
 
     public List<ReservationModel> GetByUserID(int userId)
     {
-        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
-        return _connection.Query<ReservationModel>(sql, new { Id = userId }).ToList();
+        string sql = $"SELECT * FROM {Table} WHERE Users_ID = @UserId";
+        return _connection.Query<ReservationModel>(sql, new { UserId = userId }).ToList();
     }
 
     public int GetLastInsertedId()
