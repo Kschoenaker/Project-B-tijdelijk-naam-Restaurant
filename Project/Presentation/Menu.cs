@@ -20,7 +20,7 @@ static class Menu
                 do
                 {
                     Console.Clear();
-                    PrintHeader();
+                    Header.PrintHeader();
 
                     Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
 
@@ -85,12 +85,6 @@ static class Menu
         }
     }
 
-    public static void PrintHeader()
-    {
-        Console.WriteLine("Welcome the system!");
-        Console.WriteLine();
-    }
-
     public static void PreStart()
     {
         int selectOption = 0;
@@ -100,7 +94,7 @@ static class Menu
         do
         {
             Console.Clear();
-            PrintHeader();
+            Header.PrintHeader();
 
             Console.WriteLine("Use ↑/↓ to navigate and Enter to select option");
 

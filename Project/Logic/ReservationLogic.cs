@@ -73,6 +73,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
+            Header.PrintHeader();
             ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount);
             input = Console.ReadLine();
         } while (!(input == "Y" || input == "N"));
@@ -98,6 +99,7 @@ public class ReservationLogic
     public static int ReservationPeopleAsk()
     {
         Console.Clear();
+        Header.PrintHeader();
         ReservationPresentaion.PrintPeopleComingQuestion();
         string input = Console.ReadLine();
 
@@ -108,6 +110,7 @@ public class ReservationLogic
         catch (System.Exception)
         {
             Console.Clear();
+            Header.PrintHeader();
             ReservationPresentaion.PrintInvalidInput();
             return ReservationPeopleAsk(); // Call the function again if input is invalid
         }
@@ -116,6 +119,7 @@ public class ReservationLogic
     public static string? ReservationMarkAsk()
     {
         Console.Clear();
+        Header.PrintHeader();
         ReservationPresentaion.PrintRemarkAsk();
         return Console.ReadLine();
     }
@@ -130,6 +134,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
+            Header.PrintHeader();
             ReservationPresentaion.PrintDaySelectHeader();
 
             string dayStr = selectedDate.Day.ToString("00");
@@ -182,6 +187,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
+            Header.PrintHeader();
             ReservationPresentaion.PrintTimeSelect(selectedTime);
 
             key = Console.ReadKey(true).Key;
@@ -211,6 +217,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
+            Header.PrintHeader();
 
             for (int i = 0; i < tables.Count; i++)
             {
@@ -304,6 +311,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
+            Header.PrintHeader();
 
             ReservationPresentaion.PrintReservationTableHeader();
 
@@ -358,6 +366,7 @@ public class ReservationLogic
                 else
                 {
                     Console.Clear();
+                    Header.PrintHeader();
                     ReservationPresentaion.PrintReservation(reservations[selectedReservation], tablesDict[selectedReservation], usersDict[selectedReservation]);
                     Console.ReadLine();
                 }

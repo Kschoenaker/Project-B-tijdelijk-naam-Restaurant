@@ -5,7 +5,7 @@ static class LoginForm
     public static void Start()
     {
         Console.Clear();
-        Menu.PrintHeader();
+        Header.PrintHeader();
 
         bool NotLoggedIn = true;
         while (NotLoggedIn)
