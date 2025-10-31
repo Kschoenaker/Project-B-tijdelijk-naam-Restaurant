@@ -19,6 +19,12 @@ public class UserLogic // alle logic layer moet static zijn --> hoeft er geen in
         get { return _access; }
         set { _access = value; }
     }
+
+    public static UsersModel GetUserID(int id)
+    {
+        UsersAccess usersAccess = _access;
+        return usersAccess.GetById(id);
+    }
     
     public static bool HandleLogin(UsersModel user)
     {

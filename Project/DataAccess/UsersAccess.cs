@@ -30,6 +30,12 @@ public class UsersAccess
         return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Email = email });
     }
 
+    public UsersModel GetById(int id)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
+        return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Id = id });
+    }
+
     public void Update(UsersModel account)
     {
         string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, fullname = @FullName WHERE id = @Id";

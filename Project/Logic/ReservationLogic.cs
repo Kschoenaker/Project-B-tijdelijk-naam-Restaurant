@@ -64,8 +64,7 @@ public class ReservationLogic
         List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
         // Add time to date
-        date.AddHours(time.Hour);
-        date.AddMinutes(time.Minute);
+        date = date.AddHours(time.Hour).AddMinutes(time.Minute);
 
         int userID = (int)UserLogic.CurrentAccount.ID; // Current account can't be null when making a reservation (so no need for checks)
         ReservationModel reservation = new ReservationModel(0, date, people, remark, "Active", userID);
@@ -74,7 +73,7 @@ public class ReservationLogic
         do
         {
             Console.Clear();
-            ReservationPresentaion.PrintReservationConfirm(reservation);
+            ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount);
             input = Console.ReadLine();
         } while (!(input == "Y" || input == "N"));
 
@@ -267,9 +266,14 @@ public class ReservationLogic
 
     public static void HandleSeeReservation(UsersModel user)
     {
+        List<ReservationModel> reservations = GetReservationByUser(user);
+        ShowReservation(reservations);
+    }
+
+    public static void ShowReservation(List<ReservationModel> reservations)
+    {
         Console.Clear();
 
-        List<ReservationModel> reservations = GetReservationByUser(user);
         if (reservations.Count <= 0)
         {
             Console.WriteLine("You don't have any reservations");
@@ -282,9 +286,26 @@ public class ReservationLogic
         bool selectedBack = false;
         ConsoleKey key;
 
+        // Prepare data
+        List<TablesModel> allTables = TableLogic.GetAllTables();
+        Dictionary<int, List<TablesModel>> tablesDict = new();
+        Dictionary<int, UsersModel> usersDict = new();
+        for (int i = 0; i < reservations.Count; i++)
+        {
+            List<TableRecordsModel> tableRecords = TableRecordsLogic.GetTableRecordsByReservation(reservations[i].ID);
+
+            List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
+            tablesDict.Add(i, tablesForReservation);
+
+            UsersModel reservationUser = UserLogic.GetUserID(reservations[i].Users_ID);
+            usersDict.Add(i, reservationUser);
+        }
+
         do
         {
             Console.Clear();
+
+            ReservationPresentaion.PrintReservationTableHeader();
 
             for (int i = 0; i < reservations.Count + 1; i++)
             {
@@ -305,13 +326,13 @@ public class ReservationLogic
                 }
                 else
                 {
-                    Console.Write($"{i + 1}. ");
-                    ReservationPresentaion.PrintReservationOneLine(reservations[i]);
+                    ReservationPresentaion.PrintReservationTableOneLine(reservations[i], tablesDict[i], usersDict[i]);
                 }
-
             }
 
             Console.ResetColor();
+
+            ReservationPresentaion.PrintReservationTableFooter();
 
             key = Console.ReadKey(true).Key;
 
@@ -337,7 +358,7 @@ public class ReservationLogic
                 else
                 {
                     Console.Clear();
-                    ReservationPresentaion.PrintReservation(reservations[selectedReservation]);
+                    ReservationPresentaion.PrintReservation(reservations[selectedReservation], tablesDict[selectedReservation], usersDict[selectedReservation]);
                     Console.ReadLine();
                 }
             }

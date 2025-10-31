@@ -55,7 +55,7 @@ public class ReservationPresentaion
         Console.WriteLine($"{counter + 1}. {table.TablesName} (has {table.TableSeats} seats)");
     }
 
-    public static void PrintReservation(ReservationModel reservation)
+    public static void PrintReservation(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
     {
         Console.WriteLine("Reservation:");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
@@ -67,14 +67,43 @@ public class ReservationPresentaion
         }
     }
 
-    public static void PrintReservationOneLine(ReservationModel reservation)
+    public static void PrintReservationTableHeader()
     {
-        Console.WriteLine($"Time: {reservation.Time.ToString()}, Number of people: {reservation.NumPeople}");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("╔════════╦════════════════════╦══════════════╦══════════════════════════╦════════════╦══════════╦══════════════╗");
+        Console.WriteLine("║   ID   ║       Time         ║  # People    ║         Remark           ║   Status   ║   User   ║   Tables     ║");
+        Console.WriteLine("╠════════╬════════════════════╬══════════════╬══════════════════════════╬════════════╬══════════╬══════════════╣");
+        Console.ResetColor();
     }
 
-    public static void PrintReservationConfirm(ReservationModel reservation)
+    public static void PrintReservationTableOneLine(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
     {
-        PrintReservation(reservation);
+        Console.ForegroundColor = ConsoleColor.White;
+
+        string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
+        tableList = TrimToLength(tableList, 12);
+
+        Console.WriteLine($"║ {reservation.ID,-6} ║  {reservation.Time:yyyy-MM-dd HH:mm}  ║ {reservation.NumPeople,-12} ║ {TrimToLength(reservation.Remark, 24),-24} ║ {TrimToLength(reservation.Status, 10),-10} ║ {user.Name,-8} ║ {tableList,-12} ║");
+
+        Console.ResetColor();
+    }
+
+    public static void PrintReservationTableFooter()
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("╚════════╩════════════════════╩══════════════╩══════════════════════════╩════════════╩══════════╩══════════════╝");
+        Console.ResetColor();
+    }
+
+    private static string TrimToLength(string text, int maxLength)
+    {
+        if (string.IsNullOrEmpty(text)) return "";
+        return text.Length <= maxLength ? text : text.Substring(0, maxLength - 3) + "...";
+    }
+
+    public static void PrintReservationConfirm(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
+    {
+        PrintReservation(reservation, tables, user);
 
         Console.WriteLine();
         Console.WriteLine("Confirm? (Y/N)");
