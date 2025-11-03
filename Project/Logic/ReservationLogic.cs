@@ -76,7 +76,7 @@ public class ReservationLogic
             Header.PrintHeader();
             ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount);
             input = Console.ReadLine();
-        } while (!(input == "Y" || input == "N"));
+        } while (!(input.ToUpper() == "Y" || input.ToUpper() == "N"));
 
         // Save reservation to database
         ReservationAccess reservationAccess = new ReservationAccess();
