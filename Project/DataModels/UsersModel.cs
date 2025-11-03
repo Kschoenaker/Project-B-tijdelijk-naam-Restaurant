@@ -73,13 +73,32 @@ public class UsersModel
         return true;
     }
     public static bool EmailValidator(string email)
+
     {
-        if (email.EndsWith("@gmail.com"))
+        List<string> emailDomains = new()
+{
+    "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com", "aol.com",
+    "mail.com", "gmx.com", "live.com", "msn.com", "me.com", "fastmail.com",
+    "protonmail.com", "proton.me", "tutanota.com", "posteo.de", "runbox.com",
+    "yandex.com", "yandex.ru", "qq.com", "163.com", "126.com", "naver.com", "rediffmail.com",
+    "seznam.cz", "mail.ru",
+    "tempmail.com", "mailinator.com", "guerrillamail.com", "10minutemail.com", "throwawaymail.com",
+    "company.com", "business.com", "enterprise.com", "organization.org", "school.edu"
+};
+
+
+
+
+        foreach (string domain in emailDomains)
         {
-            return true;
+            if (email.EndsWith("@" + domain))
+            {
+                return true;
+            }
         }
         return false;
     }
+
 
     public static bool DuplicateAccount(UsersModel user)
     {
