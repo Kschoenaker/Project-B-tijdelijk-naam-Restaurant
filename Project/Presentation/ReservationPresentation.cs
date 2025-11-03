@@ -73,11 +73,46 @@ public class ReservationPresentaion
         }
     }
 
-    public static void PrintReservationTableHeader()
+    public static void PrintReservationFilter(string filterName, string filterValue, bool showHighlight)
+    {
+        if (showHighlight)
+        {
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
+        }
+
+        Console.WriteLine($"{filterName}: {filterValue}");
+
+        Console.ResetColor();
+        Console.WriteLine();
+    }
+
+    public static void PrintReservationTableHeader(bool showHighlight, int highlightRight)
     {
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("╔════════╦════════════════════╦══════════════╦══════════════════════════╦════════════╦══════════╦══════════════╗");
-        Console.WriteLine("║   ID   ║       Time         ║  # People    ║         Remark           ║   Status   ║   User   ║   Tables     ║");
+
+        string lineToPrint = "║   ID   ║       Time         ║  # People    ║         Remark           ║   Status   ║   User   ║   Tables     ║";
+        string[] lineParts = lineToPrint.Split("║");
+
+        //Console.Write("║");
+
+        for (int i = 0; i < lineParts.Count(); i++)
+        {
+            if (i == highlightRight + 1 && showHighlight)
+            {
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            else
+            {
+                Console.ResetColor();
+            }
+
+            Console.Write(lineParts[i] + "║");
+        }
+        Console.WriteLine();
+
         Console.WriteLine("╠════════╬════════════════════╬══════════════╬══════════════════════════╬════════════╬══════════╬══════════════╣");
         Console.ResetColor();
     }
