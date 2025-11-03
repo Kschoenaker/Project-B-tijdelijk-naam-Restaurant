@@ -37,7 +37,7 @@ static class LoginForm
             else
             {
                 Console.WriteLine("Username");
-                Console.WriteLine("Needs to be at least 8 characters");
+                Console.WriteLine("Needs to be at least 4 characters");
                 Console.WriteLine("");
                 Console.WriteLine("Password");
                 Console.WriteLine("Needs to be at least 8 characters");

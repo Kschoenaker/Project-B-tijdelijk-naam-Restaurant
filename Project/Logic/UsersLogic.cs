@@ -53,7 +53,7 @@ public class UserLogic // alle logic layer moet static zijn --> hoeft er geen in
     }
 
 
-    public static bool UsernameVal(string? username) => !string.IsNullOrEmpty(username) && username.Length >= 8;
+    public static bool UsernameVal(string? username) => !string.IsNullOrEmpty(username) && username.Length >= 4 && username.Length <= 15;
     
     public static bool PasswordVal(string password)
     {
