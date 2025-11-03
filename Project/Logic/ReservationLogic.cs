@@ -1,3 +1,5 @@
+using System.Security.Cryptography.X509Certificates;
+
 public class ReservationLogic
 {
     // ------ Code for making reservations
@@ -75,7 +77,7 @@ public class ReservationLogic
             Console.Clear();
             Header.PrintHeader();
             ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount);
-            input = Console.ReadLine();
+            input = Console.ReadLine().ToUpper();
         } while (!(input == "Y" || input == "N"));
 
         // Save reservation to database
@@ -302,20 +304,60 @@ public class ReservationLogic
             List<TableRecordsModel> tableRecords = TableRecordsLogic.GetTableRecordsByReservation(reservations[i].ID);
 
             List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
-            tablesDict.Add(i, tablesForReservation);
+            tablesDict.Add(reservations[i].ID, tablesForReservation);
 
             UsersModel reservationUser = UserLogic.GetUserByID(reservations[i].Users_ID);
-            usersDict.Add(i, reservationUser);
+            usersDict.Add(reservations[i].ID, reservationUser);
         }
+
+        string filterName = "";
+        string filterDate = "";
+        string filterTable = "";
+
+        int reservationSelectRight = 0;
+        string sortBy = "Date";
+        bool ascending = true;
 
         do
         {
             Console.Clear();
             Header.PrintHeader();
 
-            ReservationPresentaion.PrintReservationTableHeader();
+            var filteredReservations = reservations
+                .Where(r => string.IsNullOrEmpty(filterName) || usersDict[r.ID].Name.Contains(filterName, StringComparison.OrdinalIgnoreCase))
+                .Where(r => string.IsNullOrEmpty(filterDate) || r.Time.ToString("yyyy-MM-dd HH:mm").Contains(filterDate))
+                .Where(r =>
+                {
+                    var tablesForRes = tablesDict[r.ID];
+                    string tableNames = string.Join(",", tablesForRes.Select(t => t.TablesName));
+                    return string.IsNullOrEmpty(filterTable) || tableNames.Contains(filterTable, StringComparison.OrdinalIgnoreCase);
+                })
+                .ToList();
 
-            for (int i = 0; i < reservations.Count + 1; i++)
+            filteredReservations = sortBy switch
+            {
+                "ID" => (ascending ? filteredReservations.OrderBy(r => r.ID) : filteredReservations.OrderByDescending(r => r.ID)).ToList(),
+                "Time" => (ascending ? filteredReservations.OrderBy(r => r.Time) : filteredReservations.OrderByDescending(r => r.Time)).ToList(),
+                "People" => (ascending ? filteredReservations.OrderBy(r => r.NumPeople) : filteredReservations.OrderByDescending(r => r.NumPeople)).ToList(),
+                "Remark" => (ascending ? filteredReservations.OrderBy(r => r.Remark) : filteredReservations.OrderByDescending(r => r.Remark)).ToList(),
+                "Status" => (ascending ? filteredReservations.OrderBy(r => r.Status) : filteredReservations.OrderByDescending(r => r.Status)).ToList(),
+                "User" => (ascending ? filteredReservations.OrderBy(r => usersDict[r.ID].Name) : filteredReservations.OrderByDescending(r => usersDict[r.ID].Name)).ToList(),
+                "Tables" => (ascending ? filteredReservations.OrderBy(r => string.Join(",", tablesDict[r.ID].Select(t => t.TablesName))) : filteredReservations.OrderByDescending(r => string.Join(",", tablesDict[r.ID].Select(t => t.TablesName)))).ToList(),
+                _ => filteredReservations
+            };
+
+            ReservationPresentaion.PrintReservationFilter("Name", filterName, selectedReservation == -4);
+            ReservationPresentaion.PrintReservationFilter("Date", filterDate, selectedReservation == -3);
+            ReservationPresentaion.PrintReservationFilter("Table", filterTable, selectedReservation == -2);
+
+            ReservationPresentaion.PrintReservationTableHeader(selectedReservation == -1, reservationSelectRight);
+
+            if (filteredReservations.Count() <= 0)
+            {
+                Console.WriteLine("No reservations");
+            }
+
+            for (int i = 0; i < filteredReservations.Count + 1; i++)
             {
                 if (i == selectedReservation)
                 {
@@ -327,14 +369,15 @@ public class ReservationLogic
                     Console.ResetColor();
                 }
 
-                if (reservations.Count <= i)
+                if (filteredReservations.Count <= i)
                 {
                     // Print back
                     Console.WriteLine($"Back");
                 }
                 else
                 {
-                    ReservationPresentaion.PrintReservationTableOneLine(reservations[i], tablesDict[i], usersDict[i]);
+                    var r = filteredReservations[i];
+                    ReservationPresentaion.PrintReservationTableOneLine(r, tablesDict[r.ID], usersDict[r.ID]);
                 }
             }
 
@@ -347,27 +390,78 @@ public class ReservationLogic
             if (key == ConsoleKey.UpArrow)
             {
                 selectedReservation--;
-                if (selectedReservation < 0)
+                if (selectedReservation < -4)
                     selectedReservation = reservations.Count - 1;
             }
             else if (key == ConsoleKey.DownArrow)
             {
                 selectedReservation++;
                 if (selectedReservation >= reservations.Count + 1) // + 1 for the back function
-                    selectedReservation = 0;
+                    selectedReservation = -4;
+            }
+            else if (key == ConsoleKey.LeftArrow && selectedReservation == -1) // -1 So only when its on the header
+            {
+                reservationSelectRight--;
+                if (reservationSelectRight < 0)
+                {
+                    reservationSelectRight = 6;
+                }
+            }
+            else if (key == ConsoleKey.RightArrow && selectedReservation == -1) // -1 So only when its on the header
+            {
+                reservationSelectRight++;
+                if (reservationSelectRight > 6)
+                {
+                    reservationSelectRight = 0;
+                }
             }
             else if (key == ConsoleKey.Enter)
             {
-                if (selectedReservation >= reservations.Count)
+                if (selectedReservation == -1)
+                {
+                    // Header sorting (based on current column)
+                    sortBy = reservationSelectRight switch
+                    {
+                        0 => "ID",
+                        1 => "Time",
+                        2 => "People",
+                        3 => "Remark",
+                        4 => "Status",
+                        5 => "User",
+                        6 => "Tables",
+                        _ => sortBy
+                    };
+                    ascending = !ascending;
+                }
+                else if (selectedReservation >= filteredReservations.Count)
                 {
                     selectedBack = true;
                     return;
                 }
+                else if (selectedReservation < -1)
+                {
+                    switch (selectedReservation)
+                    {
+                        case -4:
+                            Console.WriteLine("Enter name filter");
+                            filterName = Console.ReadLine();
+                            break;
+                        case -3:
+                            Console.WriteLine("Enter date filter");
+                            filterDate = Console.ReadLine();
+                            break;
+                        case -2:
+                            Console.WriteLine("Enter table filter");
+                            filterTable = Console.ReadLine();
+                            break;
+                    }
+                }
                 else
                 {
+                    var r = filteredReservations[selectedReservation];
                     Console.Clear();
                     Header.PrintHeader();
-                    ReservationPresentaion.PrintReservation(reservations[selectedReservation], tablesDict[selectedReservation], usersDict[selectedReservation]);
+                    ReservationPresentaion.PrintReservation(r, tablesDict[r.ID], usersDict[r.ID]);
                     Console.ReadLine();
                 }
             }
