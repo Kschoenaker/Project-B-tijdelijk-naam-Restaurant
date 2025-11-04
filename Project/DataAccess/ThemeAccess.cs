@@ -38,13 +38,26 @@ public class ThemeAccess
 
     public List<ThemeModel> GetByThemeID(int themeId)
     {
-        string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeId";
+        string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeID";
         return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).ToList();
     }
+    public int GetThemeIdByName(string themeName)
+    {
+        string sql = $"SELECT ID FROM {Table} WHERE ThemeName = @ThemeName";
+        return _connection.ExecuteScalar<int>(sql, new { ThemeName = themeName });
+    }
+
+    public List<string> GetAllThemeNames()
+    {
+    string sql = $"SELECT ThemeName FROM {Table}";
+    return _connection.Query<string>(sql).ToList();
+    }
+
+
 
     public int GetLastInsertedId()
     {
-        string sql = "SELECT last_insert_rowid();";
+        string sql = $"SELECT MAX(Id) FROM {Table}";
         return _connection.ExecuteScalar<int>(sql);
     }
 
