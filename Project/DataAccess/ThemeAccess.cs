@@ -17,7 +17,7 @@ public class ThemeAccess
         _connection.Execute(sql, theme);
     }
 
-    public void Update(ReservationModel theme)
+    public void Update(ThemeModel theme)
     {
         string sql = $@"
             UPDATE {Table}
@@ -26,12 +26,14 @@ public class ThemeAccess
         _connection.Execute(sql, theme);
     }
 
-    public void Delete(ReservationModel theme)
+    public void Delete(ThemeModel theme)
     {
+        // _connection.Open();
         string sql = $@"
             DELETE FROM {Table}
             WHERE ID = @ID";
         _connection.Execute(sql, new { theme.ID });
+
     }
 
     public List<ThemeModel> GetByThemeID(int themeId)
@@ -45,4 +47,5 @@ public class ThemeAccess
         string sql = "SELECT last_insert_rowid();";
         return _connection.ExecuteScalar<int>(sql);
     }
+
 }

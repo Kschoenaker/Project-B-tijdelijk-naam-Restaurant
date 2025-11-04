@@ -11,9 +11,6 @@ public class UsersAccess
 
     public void Add(UsersModel account)
     {
-        _connection.Open();
-
-        // Insert the row and get the generated ID
         string sql = $@"
             INSERT INTO {Table} (Name, Email, Password) 
             VALUES (@Name, @Email, @Password);
