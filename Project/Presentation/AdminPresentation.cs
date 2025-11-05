@@ -219,8 +219,8 @@ public static void MenuManagement()
                     case 0: // YES
                         Console.Clear();
                         Console.WriteLine($" Thema '{themeName}' toegevoegd aan database!");
-                        // ThemeDAL.AddTheme(new ThemeModel(themeName));
-                        AdminPresentation.AddDishesToTheme(themeName);
+                        ThemeModel theme = ThemeLogic.Add(themeName);
+                        AdminPresentation.AddDishesToTheme(theme);
                         selecting = false;
                         break;
                     case 1: // NO
@@ -238,10 +238,10 @@ public static void MenuManagement()
     }
 
 
-public static void AddDishesToTheme(string themeName)
+public static void AddDishesToTheme(ThemeModel theme)
 {
     Console.Clear();
-    Console.WriteLine($"=== Add new dish to Theme: {themeName} ===");
+    Console.WriteLine($"=== Add new dish to Theme: {theme.ThemeName} ===");
 
     List<string> options = new List<string>
     {
@@ -258,7 +258,7 @@ public static void AddDishesToTheme(string themeName)
     while (running)
     {
         Console.Clear();
-        Console.WriteLine($"=== Add new dish to Theme: {themeName} ===\n");
+        Console.WriteLine($"=== Add new dish to Theme: {theme.ThemeName} ===\n");
         Console.WriteLine("Gebruik ↑/↓ om te navigeren en druk op Enter om te kiezen:\n");
 
         // Menu tonen met highlight
@@ -298,29 +298,29 @@ public static void AddDishesToTheme(string themeName)
             {
                 case 0:
                     Console.Clear();
-                    Console.WriteLine($"=== Nieuw Voorgerecht voor {themeName} ===");
-                    AdminPresentation.CreateDish("Voorgerecht");
+                    Console.WriteLine($"=== Nieuw Voorgerecht voor {theme.ThemeName} ===");
+                    AdminPresentation.CreateDish("Voorgerecht", theme);
                     
                     // hier kun je straks de invoer voor een nieuw gerecht doen
                     break;
 
                 case 1:
                     Console.Clear();
-                    Console.WriteLine($"=== Nieuw Hoofdgerecht voor {themeName} ===");
-                    AdminPresentation.CreateDish("Hoofdgerecht");
+                    Console.WriteLine($"=== Nieuw Hoofdgerecht voor {theme.ThemeName} ===");
+                    AdminPresentation.CreateDish("Hoofdgerecht", theme);
                     // invoer voor hoofdgerecht
                     break;
 
                 case 2:
                     Console.Clear();
-                    Console.WriteLine($"=== Nieuw Nagerecht voor {themeName} ===");
-                    AdminPresentation.CreateDish("Nagerecht");
+                    Console.WriteLine($"=== Nieuw Nagerecht voor {theme.ThemeName} ===");
+                    AdminPresentation.CreateDish("Nagerecht", theme);
                     // invoer voor nagerecht
                     break;
 
                 case 3:
                     Console.Clear();
-                    Console.WriteLine($"Klaar met gerechten toevoegen aan {themeName}.");
+                    Console.WriteLine($"Klaar met gerechten toevoegen aan {theme.ThemeName}.");
                     
                     running = false;
                     break;
@@ -334,7 +334,7 @@ public static void AddDishesToTheme(string themeName)
     }
 }
 
-    public static void CreateDish(string dishType)
+    public static void CreateDish(string dishType, ThemeModel theme)
     {
         Console.Clear();
         Console.WriteLine("=== Nieuw gerecht toevoegen ===");
@@ -354,8 +354,8 @@ public static void AddDishesToTheme(string themeName)
         Console.WriteLine("\nGerecht succesvol aangemaakt!");
         Console.WriteLine("nog regelen dat hij het nieuwe dish toevoegt");
 
-        
-
+        DishModel dishModel = new DishModel(0, theme.ID, dishName, price, dishType);
+        DishLogic.AddDish(dishModel);
 
     }
 

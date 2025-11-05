@@ -1,12 +1,20 @@
 public class ThemeLogic
 {
+    public static ThemeModel Add(ThemeModel themeModel)
+    {
+        ThemeAccess themeAccess = new ThemeAccess();
+        themeAccess.Add(themeModel);
+        return themeAccess.GetThemeByName(themeModel.ThemeName);
+    }
+
+    public static ThemeModel Add(string theme)
+    {
+        ThemeModel themeModel= new ThemeModel(0, theme);
+        return Add(themeModel);
+    }
 
     public bool MakeTheme(string theme)
     {
-
-
-
-
         ThemeAccess themeaccess = new ThemeAccess();
 
         int? id = themeaccess.GetThemeIdByNamecanbenull(theme);

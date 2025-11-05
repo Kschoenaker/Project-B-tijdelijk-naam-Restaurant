@@ -1,24 +1,18 @@
 public class DishLogic
 {
 
-
-
-
-    public void AddDish(string theme ,string dishname, double dishprice, string dishtype)
+    public void AddDish(string theme, string dishname, double dishprice, string dishtype)
     {
-
-
-
-        DishAccess dishaccess = new();
         ThemeAccess themeaccess = new();
 
         int theme_id = themeaccess.GetThemeIdByName(theme);
-        DishModel dish = new(0,theme_id, dishname, dishprice, dishtype);
+        DishModel dish = new(0, theme_id, dishname, dishprice, dishtype);
+        AddDish(dish);
+    }
+    
+    public void AddDish(DishModel dish)
+    {
+        DishAccess dishaccess = new();
         dishaccess.Add(dish);
-        
-
-        
-
-
     }
 }
