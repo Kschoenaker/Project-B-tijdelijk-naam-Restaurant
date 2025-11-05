@@ -13,7 +13,7 @@ public class ThemeLogic
 
         if (id is null)
         {
-        ThemeModel thememodel = new(0, theme);
+            ThemeModel thememodel = new(0, theme);
             themeaccess.Add(thememodel);
             return true;
         }
@@ -27,6 +27,12 @@ public class ThemeLogic
 
         }
 
+    }
+    public int? CheckIDbyname(string theme)
+    {
+        ThemeAccess access = new();
+
+        return access.GetThemeIdByNamecanbenull(theme);
     }
     public int ThemeCheck()
     {

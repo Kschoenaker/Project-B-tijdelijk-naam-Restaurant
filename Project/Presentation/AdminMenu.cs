@@ -44,10 +44,17 @@ static class AdminMenu
                     }
                     else
                     {
-                        Console.WriteLine("Write a theme to add a dish to:");
-                        string themeuser = Console.ReadLine();
-                        themelogic.checkTheme(themeuser);
+                        string themeuser;
+                        while (true){
+                            Console.WriteLine("Write a theme to add a dish to:");
+                            themeuser = Console.ReadLine();
+                            if (themelogic.CheckIDbyname(themeuser) is not null)
+                            {
+                                break;
+                            }
+                            Console.WriteLine("Not valid theme");
 
+                        }
                         Console.WriteLine("Write your dishname to add to theme:");
                         string dishname = Console.ReadLine();
 
@@ -56,8 +63,15 @@ static class AdminMenu
 
                         Console.WriteLine("Write your type of the dish:");
                         string dishtype = Console.ReadLine();
-
+                        Console.WriteLine("");
                         dishlogic.AddDish(themeuser, dishname, dishprice, dishtype);
+                        Console.WriteLine("Dish has been added:");
+                        Console.WriteLine($"Theme: {themeuser}");
+                        Console.WriteLine($"Name: {dishname}");
+                        Console.WriteLine($"Price: {dishprice}");
+                        Console.WriteLine($"Type: {dishtype}");
+                        Console.WriteLine("");
+
                     }
                     break;
                 case "L":
