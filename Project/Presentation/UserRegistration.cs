@@ -42,7 +42,7 @@ static class UserRegistration
 
         while (true)
         {
-            Console.WriteLine("Please enter your email ( @gmail.com | @outlook.com | @hotmail.com)f");
+            Console.WriteLine("Please enter your email ( @gmail.com | @outlook.com | @hotmail.com | ...)");
             email = Console.ReadLine();
             if (UsersModel.EmailValidator(email))
             {
