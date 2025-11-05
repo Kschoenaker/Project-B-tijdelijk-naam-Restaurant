@@ -8,7 +8,6 @@ public static void AdminStartScreen()
 
         List<string> options = new List<string>
     {
-        "Make reservation",
         "See all reservation",
         "Theme Management",
         "Menu Planner Management",  
@@ -59,20 +58,17 @@ public static void AdminStartScreen()
                 switch (selectedOption)
                 {
                     case 0:
-                        Console.WriteLine("Go to Reservations");
-                        break;
-                    case 1:
                         Console.WriteLine("See all reservations");
                         break;
-                    case 2:
+                    case 1:
                         Console.WriteLine("Menu's");
                         AdminPresentation.MenuManagement();
                         break;
-                    case 3:
+                    case 2:
                         Console.WriteLine("Menu planner");
                         break;
-                    case 4:
-                        Console.WriteLine("Log out");
+                    case 3:
+                    
                         runCode = false; // stop de loop
                         //  toevoegen dat hioj uitlopged
 
@@ -148,7 +144,7 @@ public static void MenuManagement()
                         AdminPresentation.MakeNewMenu();
                         break;
                     case 1:
-                        Console.WriteLine("See all reservations");
+                        Console.WriteLine("See all menu's");
                         break;
                     case 2:
                         Console.WriteLine("Exit");
@@ -160,7 +156,7 @@ public static void MenuManagement()
                         break;
                 }
 
-                Console.WriteLine("Druk op een toets om door te gaan...");
+                //Console.WriteLine("Druk op een toets om door te gaan...");
                 Console.ReadKey();
             }
         }
@@ -234,7 +230,7 @@ public static void MenuManagement()
                         break;
                 }
 
-                Console.WriteLine("\nDruk op een toets om verder te gaan...");
+                //Console.WriteLine("\nDruk op een toets om verder te gaan...");
                 Console.ReadKey();
             }
         }
@@ -303,6 +299,7 @@ public static void AddDishesToTheme(string themeName)
                     Console.Clear();
                     Console.WriteLine($"=== Nieuw Voorgerecht voor {themeName} ===");
                     AdminPresentation.CreateDish("Voorgerecht");
+                    
                     // hier kun je straks de invoer voor een nieuw gerecht doen
                     break;
 
@@ -328,11 +325,10 @@ public static void AddDishesToTheme(string themeName)
                     break;
             }
 
-            if (running)
-            {
-                Console.WriteLine("\nDruk op een toets om verder te gaan...");
+
+                //Console.WriteLine("\nDruk op een toets om verder te gaan...");
                 Console.ReadKey();
-            }
+            
         }
     }
 }
@@ -346,7 +342,8 @@ public static void AddDishesToTheme(string themeName)
         string dishName = Console.ReadLine();
 
         Console.Write("Voer de prijs in (bijv. 12.50): ");
-        double price = double.Parse(Console.ReadLine());
+        double price = double.Parse(Console.ReadLine().Replace("." , ","));
+        
 
         // Console.Write("Voer het type gerecht in (Voorgerecht / Hoofdgerecht / Nagerecht): ");
         // string type = Console.ReadLine();
