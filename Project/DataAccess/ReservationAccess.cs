@@ -49,4 +49,11 @@ public class ReservationAccess
         string sql = "SELECT last_insert_rowid();";
         return _connection.ExecuteScalar<int>(sql);
     }
+
+    public List<ReservationModel> GetAll()
+    {
+        string sql = $"SELECT * FROM {Table}";
+        return _connection.Query<ReservationModel>(sql).ToList();
+    }
+
 }

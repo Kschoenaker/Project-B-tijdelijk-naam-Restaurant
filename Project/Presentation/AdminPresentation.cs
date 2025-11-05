@@ -59,6 +59,7 @@ public static void AdminStartScreen()
                 {
                     case 0:
                         Console.WriteLine("See all reservations");
+                        ReservationLogic.HandleSeeAllReservation();
                         break;
                     case 1:
                         Console.WriteLine("Menu's");

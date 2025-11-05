@@ -326,6 +326,13 @@ public class ReservationLogic
         ShowReservation(reservations);
     }
 
+    public static void HandleSeeAllReservation()
+    {
+        ReservationAccess reservationAccess = new();
+        List<ReservationModel> reservations = reservationAccess.GetAll();
+        ShowReservation(reservations);
+    }
+
     public static void ShowReservation(List<ReservationModel> reservations)
     {
         Console.Clear();
