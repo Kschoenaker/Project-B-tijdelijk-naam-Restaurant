@@ -10,8 +10,8 @@ public static void AdminStartScreen()
     {
         "Make reservation",
         "See all reservation",
-        "Menu's",
-        "Menu Planner",
+        "Theme Management",
+        "Menu Planner Management",
         "Log out"
     };
 
@@ -366,27 +366,6 @@ public static void AddDishesToTheme(string themeName)
     {
         Console.Clear();
         Console.WriteLine("=== Nieuw gerecht toevoegen ===");
-
-
-        Console.Write("Voer het Theme ID in: ");
-        int themeId = int.Parse(Console.ReadLine());
-
-        // 2️⃣ Naam van het gerecht
-        Console.Write("Voer de naam van het gerecht in: ");
-        string dishName = Console.ReadLine();
-
-        // 3️⃣ Prijs
-        Console.Write("Voer de prijs in (bijv. 12.50): ");
-        double price = double.Parse(Console.ReadLine());
-
-        // 4️⃣ Type gerecht
-        Console.Write("Voer het type gerecht in (Voorgerecht / Hoofdgerecht / Nagerecht): ");
-
-        string type = Console.ReadLine();
-
-        Console.WriteLine($"→  {dishName} ({type}) - €{price}");
-
-        Console.WriteLine("\nGerecht succesvol aangemaakt!");
 
     }
 
