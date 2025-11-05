@@ -36,7 +36,7 @@ public class ReservationPresentaion
 
     public static void PrintPeopleComingQuestion()
     {
-        Console.WriteLine("How many people are coming?");
+        Console.WriteLine("How many people are coming? (Max is 10)");
     }
 
     public static void PrintRemarkAsk()
@@ -60,6 +60,7 @@ public class ReservationPresentaion
         Console.WriteLine("Reservation:");
         Console.WriteLine($"Name: {user.Name}.");
         Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
+        Console.WriteLine($"Status: {reservation.Status}");
         Console.WriteLine($"Reservation date: {reservation.Time.ToString("dd/MM/yyyy")}");
 
         string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
@@ -71,6 +72,8 @@ public class ReservationPresentaion
         {
             Console.WriteLine($"Remark: {reservation.Remark}");
         }
+
+        Console.WriteLine();
     }
 
     public static void PrintReservationFilter(string filterName, string filterValue, bool showHighlight)

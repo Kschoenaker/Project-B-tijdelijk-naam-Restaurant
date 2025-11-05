@@ -40,15 +40,20 @@ public class TableAccess
         return result.ToList();
     }
 
-    // Get all tables that do NOT have a reservation on a specific day
+    // Get all tables that do NOT have an ACTIVE reservation on a specific day
     public List<TablesModel> GetUnreservedTablesByDate(DateTime date)
     {
-        string sql = $@"
+        string sql = @"
             SELECT t.ID, t.TableSeats, t.TablesName
-            FROM {Table} t
-            LEFT JOIN TableRecords tr ON t.ID = tr.Tables_ID
-            LEFT JOIN Reservation r ON tr.Reservation_ID = r.ID
-            WHERE r.Time IS NULL OR DATE(r.Time) != DATE(@Date)
+            FROM Tables t
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM TableRecords tr
+                JOIN Reservation r ON tr.Reservation_ID = r.ID
+                WHERE tr.Tables_ID = t.ID
+                  AND DATE(r.Time) = DATE(@Date)
+                  AND r.Status = 'Active'
+            );
         ";
 
         var result = _connection.Query<TablesModel>(sql, new { Date = date.Date });

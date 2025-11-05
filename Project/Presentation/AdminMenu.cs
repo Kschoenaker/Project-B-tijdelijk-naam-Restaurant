@@ -46,7 +46,7 @@ static class AdminMenu
                     {
                         Console.WriteLine("Write a theme to add a dish to:");
                         string themeuser = Console.ReadLine();
-                        themelogic.checkTheme(themeuser);
+                        //themelogic.checkTheme(themeuser);
 
                         Console.WriteLine("Write your dishname to add to theme:");
                         string dishname = Console.ReadLine();
