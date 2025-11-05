@@ -37,6 +37,13 @@ public class ThemeLogic
         return number;
 
     }
+
+
+    public void checkTheme()
+    {
+        
+
+    }
     public bool AddTheme()
     {
 
