@@ -283,7 +283,7 @@ public class ReservationLogic
 
                 suitableTables.RemoveAt(selectedTable);
 
-                // If no more people left to seat, we’re done!
+                // If no more people left to seat, stop function
                 if (NumPeople <= 0)
                     break;
 
