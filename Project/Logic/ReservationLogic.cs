@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 
 public class ReservationLogic
@@ -100,22 +101,37 @@ public class ReservationLogic
 
     public static int ReservationPeopleAsk()
     {
-        Console.Clear();
-        Header.PrintHeader();
-        ReservationPresentaion.PrintPeopleComingQuestion();
-        string input = Console.ReadLine();
-
-        try
-        {
-            return Convert.ToInt32(input);
-        }
-        catch (System.Exception)
+        bool invalidInput = false;
+        do
         {
             Console.Clear();
             Header.PrintHeader();
-            ReservationPresentaion.PrintInvalidInput();
-            return ReservationPeopleAsk(); // Call the function again if input is invalid
-        }
+
+            if (invalidInput) { ReservationPresentaion.PrintInvalidInput(); }
+
+            ReservationPresentaion.PrintPeopleComingQuestion();
+            string input = Console.ReadLine();
+
+            try
+            {
+                int num = Convert.ToInt32(input);
+
+                if (num > 10)
+                {
+                    invalidInput = true;
+                }
+                else
+                {
+                    return num;
+                }
+            }
+            catch (System.Exception)
+            {
+                Console.Clear();
+            }
+        } while (true);
+
+        return 0;
     }
 
     public static string? ReservationMarkAsk()
@@ -208,9 +224,20 @@ public class ReservationLogic
     public static List<TablesModel> ReservationTableSelect(List<TablesModel> tables, int NumPeople)
     {
         List<TablesModel> selectedTablesList = new();
+
         if (tables == null || tables.Count == 0)
-        {
             return null!;
+
+        List<TablesModel> suitableTables = tables
+            .Where(t => t.TableSeats >= NumPeople)
+            .OrderBy(t => t.TableSeats) // Prefer smallest that fits
+            .ToList();
+
+        if (suitableTables.Count == 0)
+        {
+            suitableTables = tables
+                .OrderByDescending(t => t.TableSeats)
+                .ToList();
         }
 
         int selectedTable = 0;
@@ -221,7 +248,7 @@ public class ReservationLogic
             Console.Clear();
             Header.PrintHeader();
 
-            for (int i = 0; i < tables.Count; i++)
+            for (int i = 0; i < suitableTables.Count; i++)
             {
                 if (i == selectedTable)
                 {
@@ -233,7 +260,7 @@ public class ReservationLogic
                     Console.ResetColor();
                 }
 
-                ReservationPresentaion.PrintReservationTable(tables[i], i);
+                ReservationPresentaion.PrintReservationTable(suitableTables[i], i);
             }
 
             Console.ResetColor();
@@ -242,29 +269,49 @@ public class ReservationLogic
 
             if (key == ConsoleKey.UpArrow)
             {
-                selectedTable--;
-                if (selectedTable < 0)
-                    selectedTable = tables.Count - 1;
+                selectedTable = (selectedTable - 1 + suitableTables.Count) % suitableTables.Count;
             }
             else if (key == ConsoleKey.DownArrow)
             {
-                selectedTable++;
-                if (selectedTable >= tables.Count)
-                    selectedTable = 0;
+                selectedTable = (selectedTable + 1) % suitableTables.Count;
             }
             else if (key == ConsoleKey.Enter)
             {
-                // Add table to selected tables and remove the table (so it can't be selected)
-                selectedTablesList.Add(tables[selectedTable]);
-                tables.RemoveAt(selectedTable);
+                // 🍽️ Add the selected table
+                selectedTablesList.Add(suitableTables[selectedTable]);
+                NumPeople -= suitableTables[selectedTable].TableSeats;
+
+                suitableTables.RemoveAt(selectedTable);
+
+                // If no more people left to seat, stop function
+                if (NumPeople <= 0)
+                    break;
+
+                // Refilter smaller tables if we still need seats
+                suitableTables = suitableTables
+                    .OrderByDescending(t => t.TableSeats)
+                    .ToList();
+
+                selectedTable = 0;
             }
-        } while (selectedTablesList.Sum(t => t.TableSeats) < NumPeople);
+
+        } while (suitableTables.Count > 0 && NumPeople > 0);
 
         Console.ResetColor();
         Console.Clear();
 
         return selectedTablesList;
     }
+
+
+    public static void CancelReservation(ReservationModel reservation)
+    {
+        reservation.Status = "Cancelled";
+
+        ReservationAccess reservationAccess = new();
+        reservationAccess.Update(reservation);
+    }
+
 
     //----- Code for seeing reservations
     public static List<ReservationModel> GetReservationByUser(UsersModel user)
@@ -459,15 +506,100 @@ public class ReservationLogic
                 else
                 {
                     var r = filteredReservations[selectedReservation];
-                    Console.Clear();
-                    Header.PrintHeader();
-                    ReservationPresentaion.PrintReservation(r, tablesDict[r.ID], usersDict[r.ID]);
-                    Console.ReadLine();
+                    HandlePrintReservation(r, tablesDict[r.ID], usersDict[r.ID]);
                 }
             }
         } while (!selectedBack);
 
         Console.ResetColor();
         Console.Clear();
+    }
+
+    private static void HandlePrintReservation(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
+    {
+        bool SelectedBack = false;
+        int selectedInt = 0;
+        ConsoleKey key;
+
+        do
+        {
+            Console.Clear();
+            Header.PrintHeader();
+            ReservationPresentaion.PrintReservation(reservation, tables, user);
+
+            if (reservation.Status == "Cancelled")
+            {
+                selectedInt = 1;
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+
+                Console.WriteLine("Back");
+
+                Console.ResetColor();
+            }
+            else
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    if (i == selectedInt)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    else
+                    {
+                        Console.ResetColor();
+                    }
+
+                    switch (i)
+                    {
+                        case 0:
+                            Console.WriteLine("Cancel reservation");
+                            break;
+                        case 1:
+                            Console.WriteLine("Back");
+                            break;
+                    }
+                }
+            }
+
+            key = Console.ReadKey(true).Key;
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                selectedInt--;
+                if (selectedInt < 0)
+                    selectedInt = 1;
+            }
+            else if (key == ConsoleKey.DownArrow)
+            {
+                selectedInt++;
+                if (selectedInt > 1)
+                    selectedInt = 0;
+            }
+            else if (key == ConsoleKey.Enter)
+            {
+                switch (selectedInt)
+                {
+                    case 0:
+                        Console.WriteLine();
+                        Console.WriteLine("Confirm cancel (Y/N)");
+                        string input = "";
+                        do
+                        {
+                            input = Console.ReadLine().ToUpper();
+                        } while (!(input == "Y" || input == "N"));
+
+                        if (input == "Y")
+                        {
+                            CancelReservation(reservation);
+                        }
+                        break;
+                    case 1:
+                        SelectedBack = true;
+                        break;
+                }
+            }
+        } while (!SelectedBack);
     }
 }
