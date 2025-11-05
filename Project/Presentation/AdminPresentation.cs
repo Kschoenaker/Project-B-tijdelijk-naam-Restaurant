@@ -17,7 +17,7 @@ public static void AdminStartScreen()
         int selectedOption = 0;
         ConsoleKey key;
         bool runCode = true;
-
+        ThemeLogic themelogic = new();
         while (runCode)
         {
             Console.Clear();
@@ -42,7 +42,7 @@ public static void AdminStartScreen()
             Console.ResetColor();
 
             key = Console.ReadKey(true).Key;
-
+            
             if (key == ConsoleKey.UpArrow)
             {
                 selectedOption--;
@@ -67,6 +67,7 @@ public static void AdminStartScreen()
                         break;
                     case 2:
                         Console.WriteLine("Menu planner");
+                        themelogic.AddTheme();
                         break;
                     case 3:
                     
@@ -146,6 +147,7 @@ public static void MenuManagement()
                         break;
                     case 1:
                         Console.WriteLine("See all menu's");
+
                         break;
                     case 2:
                         Console.WriteLine("Exit");
