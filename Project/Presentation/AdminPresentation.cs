@@ -10,7 +10,7 @@ public static void AdminStartScreen()
     {
         "See all reservation",
         "Theme Management",
-        "Menu Planner Management",  
+        "Menu Planner Management",
         "Log out"
     };
 
