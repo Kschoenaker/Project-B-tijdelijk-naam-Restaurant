@@ -41,6 +41,11 @@ public class ThemeAccess
         string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeID";
         return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).ToList();
     }
+    public int? GetThemeIdByNamecanbenull(string themeName)
+    {
+        string sql = $"SELECT ID FROM {Table} WHERE ThemeName = @ThemeName";
+        return _connection.ExecuteScalar<int?>(sql, new { ThemeName = themeName });
+    }
     public int GetThemeIdByName(string themeName)
     {
         string sql = $"SELECT ID FROM {Table} WHERE ThemeName = @ThemeName";
