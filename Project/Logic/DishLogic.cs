@@ -1,7 +1,7 @@
 public class DishLogic
 {
 
-    public void AddDish(string theme, string dishname, double dishprice, string dishtype)
+    public static void AddDish(string theme, string dishname, double dishprice, string dishtype)
     {
         ThemeAccess themeaccess = new();
 
@@ -10,7 +10,7 @@ public class DishLogic
         AddDish(dish);
     }
     
-    public void AddDish(DishModel dish)
+    public static void AddDish(DishModel dish)
     {
         DishAccess dishaccess = new();
         dishaccess.Add(dish);

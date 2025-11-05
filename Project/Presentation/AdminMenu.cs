@@ -64,7 +64,7 @@ static class AdminMenu
                         Console.WriteLine("Write your type of the dish:");
                         string dishtype = Console.ReadLine();
                         Console.WriteLine("");
-                        dishlogic.AddDish(themeuser, dishname, dishprice, dishtype);
+                        DishLogic.AddDish(themeuser, dishname, dishprice, dishtype);
                         Console.WriteLine("Dish has been added:");
                         Console.WriteLine($"Theme: {themeuser}");
                         Console.WriteLine($"Name: {dishname}");
