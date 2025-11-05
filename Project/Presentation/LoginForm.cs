@@ -23,9 +23,19 @@ static class LoginForm
             {
                 // find if the account is in the build
                 if (UserLogic.HandleLogin(UserName, PassWord))
-                {
                     // Log in valid
-                    NotLoggedIn = false;
+                {
+                    if (AdminLogic.IsAdmin(UserName , PassWord))
+                    {
+                        // admin account log in
+                        AdminPresentation.AdminStartScreen();
+                    }
+                    if (true)
+                    {
+                        // normal account loggin
+                        NotLoggedIn = false;
+                        
+                    }
                 }
                 else
                 {
