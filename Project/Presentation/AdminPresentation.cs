@@ -11,7 +11,7 @@ public static void AdminStartScreen()
         "Make reservation",
         "See all reservation",
         "Theme Management",
-        "Menu Planner Management",
+        "Menu Planner Management",  
         "Log out"
     };
 
