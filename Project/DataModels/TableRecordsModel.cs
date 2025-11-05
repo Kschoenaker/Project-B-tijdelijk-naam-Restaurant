@@ -4,6 +4,7 @@ public class TableRecordsModel
     public int Tables_ID { get; set; }
     public int Reservation_ID { get; set; }
 
+    public TableRecordsModel() {}
     public TableRecordsModel(int id, int tables_ID, int reservation_ID)
     {
         ID = id;

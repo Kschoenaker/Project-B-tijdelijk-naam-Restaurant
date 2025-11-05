@@ -15,7 +15,7 @@ static class UserRegistration
         while (true)
         {
             Console.WriteLine("Please enter your username ");
-            Console.WriteLine("Must be 8-15 characters long");
+            Console.WriteLine("Must be 4-15 characters long");
             username = Console.ReadLine();
             if (UsersModel.UsernameValidator(username))
             {
@@ -42,7 +42,7 @@ static class UserRegistration
 
         while (true)
         {
-            Console.WriteLine("Please enter your email ( @gmail.com)");
+            Console.WriteLine("Please enter your email ( @gmail.com | @outlook.com | @hotmail.com)f");
             email = Console.ReadLine();
             if (UsersModel.EmailValidator(email))
             {

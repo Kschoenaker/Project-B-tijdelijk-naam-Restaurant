@@ -11,9 +11,6 @@ public class UsersAccess
 
     public void Add(UsersModel account)
     {
-        _connection.Open();
-
-        // Insert the row and get the generated ID
         string sql = $@"
             INSERT INTO {Table} (Name, Email, Password) 
             VALUES (@Name, @Email, @Password);
@@ -28,6 +25,12 @@ public class UsersAccess
     {
         string sql = $"SELECT * FROM {Table} WHERE email = @Email";
         return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Email = email });
+    }
+
+    public UsersModel GetById(int id)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
+        return _connection.QueryFirstOrDefault<UsersModel>(sql, new { Id = id });
     }
 
     public void Update(UsersModel account)
