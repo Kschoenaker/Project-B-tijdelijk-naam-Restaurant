@@ -7,6 +7,7 @@ public class UserLogic // alle logic layer moet static zijn --> hoeft er geen in
     //private set, so this can only be set by the class itself
     public static UsersModel? CurrentAccount { get; private set; }
     private static UsersAccess _access = new();
+    public static int AccessLevel;
 
     public UserLogic()
     {

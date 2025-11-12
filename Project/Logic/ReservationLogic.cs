@@ -199,7 +199,7 @@ public class ReservationLogic
 
     public static DateTime ReservationTimeSelect()
     {
-        DateTime selectedTime = DateTime.Today.AddHours(17);
+        DateTime selectedTime = DateTime.Today.AddHours(18);
         ConsoleKey key;
 
         do
@@ -303,13 +303,25 @@ public class ReservationLogic
         return selectedTablesList;
     }
 
-
-    public static void CancelReservation(ReservationModel reservation)
+    public static bool CancelReservation(ReservationModel reservation)
     {
-        reservation.Status = "Cancelled";
+        if (UserLogic.AccessLevel > 0 || reservation.Time > DateTime.Now.AddHours(24))
+        {
+            reservation.Status = "Cancelled";
 
-        ReservationAccess reservationAccess = new();
-        reservationAccess.Update(reservation);
+            ReservationAccess reservationAccess = new();
+            reservationAccess.Update(reservation);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static bool CheckReservationCanBeCancelled(ReservationModel reservation)
+    {
+        return UserLogic.AccessLevel > 0 || reservation.Time > DateTime.Now.AddHours(24);
     }
 
 
@@ -369,7 +381,7 @@ public class ReservationLogic
         string filterTable = "";
 
         int reservationSelectRight = 0;
-        string sortBy = "Date";
+        string sortBy = "ID";
         bool ascending = true;
 
         do
@@ -400,10 +412,13 @@ public class ReservationLogic
                 _ => filteredReservations
             };
 
+            Console.WriteLine("Table filters: (Selected one and press enter to start filtering)");
             ReservationPresentaion.PrintReservationFilter("Name", filterName, selectedReservation == -4);
             ReservationPresentaion.PrintReservationFilter("Date", filterDate, selectedReservation == -3);
             ReservationPresentaion.PrintReservationFilter("Table", filterTable, selectedReservation == -2);
 
+            Console.WriteLine("Sort the table by selecting one of the headers.");
+            Console.WriteLine($"Currently sorting on: {sortBy} ({(ascending ? "Ascending" : "Descending")})");
             ReservationPresentaion.PrintReservationTableHeader(selectedReservation == -1, reservationSelectRight);
 
             if (filteredReservations.Count() <= 0)
@@ -534,7 +549,7 @@ public class ReservationLogic
             Header.PrintHeader();
             ReservationPresentaion.PrintReservation(reservation, tables, user);
 
-            if (reservation.Status == "Cancelled")
+            if (reservation.Status == "Cancelled" || !CheckReservationCanBeCancelled(reservation))
             {
                 selectedInt = 1;
                 Console.BackgroundColor = ConsoleColor.White;
