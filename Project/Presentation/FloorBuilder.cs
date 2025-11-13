@@ -4,7 +4,7 @@ public enum FloorTableStatus
     Reserved, // already booked
     UnAvailable, // cannot select
     HoveredOn, // cursor is on this table
-    Selected
+    Selected // when selected
 }
 
 public class FloorTable
@@ -37,123 +37,150 @@ public class FloorTable
 public class FloorBuilder
 {
     public List<FloorTable> AllFloorTables;
+    public List<FloorTable> UnreservedFloorTables;
     public List<FloorTable> AvailableFloorTables;
     public List<FloorTable> SelectedTables;
+    public FloorTable? CurrentHoveredTable;
 
-    private const int PaddingX = 2; // space between tables horizontally
-    private const int PaddingY = 1; // space between tables vertically
+    private const int PaddingX = 4;
+    private const int PaddingY = 2;
+    private const int MaxRowWidth = 50;
 
-    public int CursorX { get; set; }
-    public int CursorY { get; set; }
-
-    public FloorBuilder(List<TablesModel> allTables, List<TablesModel> availableTables)
+    public FloorBuilder(List<TablesModel> allTables, List<TablesModel> unreservedTables, List<TablesModel> availableTables)
     {
-        // Convert tables into FloorTable objects with positions & sizes
         AllFloorTables = GenerateMap(allTables, availableTables);
-        AvailableFloorTables = AllFloorTables.Where(ft => availableTables.Contains(ft.Table)).ToList();
-        SelectedTables = new();
+        AvailableFloorTables = AllFloorTables
+            .Where(ft => availableTables.Any(t => t.ID == ft.Table.ID))
+            .ToList();
 
-        // Initialize cursor at first available table
-        var first = AvailableFloorTables.FirstOrDefault();
-        if (first != null)
+        SelectedTables = new();
+        UnreservedFloorTables = new();
+
+        foreach (var floorTable in AllFloorTables)
         {
-            CursorX = first.X;
-            CursorY = first.Y;
-            first.Status = FloorTableStatus.HoveredOn;
+            if (unreservedTables.Any(t => t.ID == floorTable.Table.ID))
+            {
+                UnreservedFloorTables.Add(floorTable);
+            }
         }
+
+        // Start on first available table
+        CurrentHoveredTable = AvailableFloorTables.FirstOrDefault();
+        if (CurrentHoveredTable != null)
+            CurrentHoveredTable.Status = FloorTableStatus.HoveredOn;
     }
 
-        private List<FloorTable> GenerateMap(List<TablesModel> tables, List<TablesModel> availableTables)
+    private List<FloorTable> GenerateMap(List<TablesModel> tables, List<TablesModel> availableTables)
     {
         List<FloorTable> floorTables = new();
-        int currentX = 0;
-        int currentY = 0;
-        int rowHeight = 0;
-        int maxRowWidth = 50; // max width per row before wrapping
+        int currentX = 0, currentY = 0, rowHeight = 0;
 
-        foreach (TablesModel table in tables)
+        foreach (var table in tables)
         {
-            int width = 0;  // table width in characters
-            int height = 0; // table height in characters
+            int width = Math.Clamp(table.TableSeats / 2, 1, 8) * 3;
+            int height = 3; // fixed height for display simplicity
 
-            switch (table.TableSeats)
-            {
-                case 2:
-                    width = 3;
-                    height = 2;
-                    break;
-                case 4:
-                    width = 5;
-                    height = 4;
-                    break;
-                case 6:
-                    width = 6;
-                    height = 5;
-                    break;
-            }
-
-            // Wrap to next row if exceeded max width
-            if (currentX + width > maxRowWidth)
+            if (currentX + width > MaxRowWidth)
             {
                 currentX = 0;
                 currentY += rowHeight + PaddingY;
                 rowHeight = 0;
             }
 
-            FloorTable floorTable = new FloorTable(currentX, currentY, width, height, table);
+            FloorTable ft = new FloorTable(currentX, currentY, width, height, table);
 
-            if (!availableTables.Contains(table))
-            {
-                floorTable.Status = FloorTableStatus.UnAvailable;
-            }
-            
-            floorTables.Add(floorTable);
+            bool isAvailable = availableTables.Any(t => t.ID == table.ID);
+            ft.Status = isAvailable ? FloorTableStatus.None : FloorTableStatus.UnAvailable;
 
-            currentX += width + PaddingX;         // move cursor to the right for next table
-            rowHeight = Math.Max(rowHeight, height); // track tallest table in current row
+
+            floorTables.Add(ft);
+            currentX += width + PaddingX;
+            rowHeight = Math.Max(rowHeight, height);
         }
 
         return floorTables;
     }
 
-    // Move the cursor and update hovered status
-    public void MoveCursor(int deltaX, int deltaY)
+    // Move to the nearest table in the requested direction
+    public bool MoveSelection(int deltaX, int deltaY)
     {
-        int newX = CursorX + deltaX;
-        int newY = CursorY + deltaY;
+        if (CurrentHoveredTable == null)
+            return false;
 
-        // Only move if the new position is inside the grid and not reserved/unavailable
-        var hovered = AllFloorTables.FirstOrDefault(ft => ft.Contains(newX, newY));
-        if (hovered != null)
+        // Get all candidates in that direction
+        var candidates = AllFloorTables.Where(ft =>
         {
-            // Reset previous hovered table
-            var prevHovered = AllFloorTables.FirstOrDefault(ft => ft.Status == FloorTableStatus.HoveredOn);
-            if (prevHovered != null && prevHovered.Status != FloorTableStatus.Selected)
-                prevHovered.Status = AvailableFloorTables.Contains(prevHovered) ? FloorTableStatus.None : FloorTableStatus.UnAvailable;
+            if (deltaX > 0) return ft.X > CurrentHoveredTable.X + CurrentHoveredTable.Width - 1;
+            if (deltaX < 0) return ft.X + ft.Width - 1 < CurrentHoveredTable.X;
+            if (deltaY > 0) return ft.Y > CurrentHoveredTable.Y + CurrentHoveredTable.Height - 1;
+            if (deltaY < 0) return ft.Y + ft.Height - 1 < CurrentHoveredTable.Y;
+            return false;
+        });
 
-            // Update new hovered table
-            if (!SelectedTables.Contains(hovered))
-                hovered.Status = FloorTableStatus.HoveredOn;
-
-            CursorX = newX;
-            CursorY = newY;
+        // Pick the closest table that overlaps on the perpendicular axis
+        FloorTable? target = null;
+        if (deltaX != 0)
+        {
+            target = candidates
+                .Where(ft => ft.Y < CurrentHoveredTable.Y + CurrentHoveredTable.Height &&
+                             ft.Y + ft.Height > CurrentHoveredTable.Y)
+                .OrderBy(ft => Math.Abs(ft.X - CurrentHoveredTable.X))
+                .FirstOrDefault();
         }
+        else if (deltaY != 0)
+        {
+            target = candidates
+                .Where(ft => ft.X < CurrentHoveredTable.X + CurrentHoveredTable.Width &&
+                             ft.X + ft.Width > CurrentHoveredTable.X)
+                .OrderBy(ft => Math.Abs(ft.Y - CurrentHoveredTable.Y))
+                .FirstOrDefault();
+        }
+
+        if (target == null)
+            return false; // no table found in that direction
+
+        // Reset previous hovered status
+        if (CurrentHoveredTable.Status == FloorTableStatus.HoveredOn)
+        {
+            if (AvailableFloorTables.Contains(CurrentHoveredTable))
+            {
+                CurrentHoveredTable.Status = SelectedTables.Contains(CurrentHoveredTable)
+                    ? FloorTableStatus.Selected
+                    : FloorTableStatus.None;
+            }
+            else
+            {
+                CurrentHoveredTable.Status = FloorTableStatus.UnAvailable;
+            }
+        }
+
+        // Set new hovered table
+        CurrentHoveredTable = target;
+        if (!SelectedTables.Contains(target))
+        {
+            if (target.Status != FloorTableStatus.Reserved && target.Status != FloorTableStatus.Selected)
+            {
+                target.Status = FloorTableStatus.HoveredOn;
+            }
+        }
+        else
+        {
+            target.Status = FloorTableStatus.Selected;
+        }
+
+        return true;
     }
 
-    // Select the currently hovered table
-    public bool SelectHoveredTable()
+    public bool SelectCurrent()
     {
-        var hovered = AllFloorTables.FirstOrDefault(ft => ft.Status == FloorTableStatus.HoveredOn);
-        if (hovered != null && AvailableFloorTables.Contains(hovered))
-        {
-            SelectedTables.Add(hovered);
-            hovered.Status = FloorTableStatus.Reserved; // mark as taken
-            return true;
-        }
-        return false;
+        if (CurrentHoveredTable == null || !AvailableFloorTables.Contains(CurrentHoveredTable))
+            return false;
+
+        CurrentHoveredTable.Status = FloorTableStatus.Selected;
+        SelectedTables.Add(CurrentHoveredTable);
+        return true;
     }
 
-    // Draw the floor to console
     public void DrawFloor()
     {
         int maxX = AllFloorTables.Max(ft => ft.X + ft.Width);
@@ -167,33 +194,58 @@ public class FloorBuilder
 
                 if (table != null)
                 {
-                    switch (table.Status)
+                    FloorTable ft = table;
+                    if (!UnreservedFloorTables.Contains(ft))
+                    {
+                        ft.Status = FloorTableStatus.Reserved;
+                    }
+
+                    if (SelectedTables.Contains(ft))
+                    {
+                        ft.Status = FloorTableStatus.Selected;
+                    }
+
+                    switch (ft.Status)
                     {
                         case FloorTableStatus.HoveredOn:
                             Console.BackgroundColor = ConsoleColor.White;
                             Console.ForegroundColor = ConsoleColor.Black;
                             break;
-                        case FloorTableStatus.Reserved:
-                            Console.BackgroundColor = ConsoleColor.Red;
-                            Console.ForegroundColor = ConsoleColor.White;
+                        case FloorTableStatus.Selected:
+                            Console.BackgroundColor = ConsoleColor.Green;
+                            Console.ForegroundColor = ConsoleColor.Green;
                             break;
                         case FloorTableStatus.UnAvailable:
                             Console.ForegroundColor = ConsoleColor.DarkGray;
+                            break;
+                        case FloorTableStatus.Reserved:
+                            Console.BackgroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.Red;
                             break;
                         default:
                             Console.ResetColor();
                             break;
                     }
-
-                    Console.Write("█"); // each cell of table
+                    Console.Write("█");
                     Console.ResetColor();
                 }
                 else
                 {
-                    Console.Write(" "); // empty space
+                    Console.Write(" ");
                 }
             }
             Console.WriteLine();
         }
+
+        // ℹ️ Info box for the hovered table
+        if (CurrentHoveredTable != null)
+        {
+            Console.WriteLine();
+            Console.WriteLine("═══════════════════════════════════════════");
+            Console.WriteLine($"Table:   {CurrentHoveredTable.Table.TablesName}");
+            Console.WriteLine($"Seats:   {CurrentHoveredTable.Table.TableSeats}");
+            Console.WriteLine(!AvailableFloorTables.Contains(CurrentHoveredTable) ? "This table can't be selected." : "Press ENTER to select this table.");
+        }
     }
 }
+

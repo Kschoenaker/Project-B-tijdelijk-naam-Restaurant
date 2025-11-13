@@ -99,6 +99,13 @@ public class ReservationLogic
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
     }
 
+    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople)
+    {
+        Dictionary<int, List<DishModel>> result = new();
+
+        return result;
+    }
+
     public static int ReservationPeopleAsk()
     {
         bool invalidInput = false;
@@ -268,6 +275,9 @@ public class ReservationLogic
     {
         List<TablesModel> selectedTablesList = new();
 
+        TableAccess tableAccess = new TableAccess();
+        List<TablesModel> allTables = tableAccess.GetAll();
+
         if (tables == null || tables.Count == 0)
             return null!;
 
@@ -282,7 +292,7 @@ public class ReservationLogic
         }
 
         // Build the floor with positions and sizes
-        FloorBuilder floor = new(tables, suitableTables); // All available initially
+        FloorBuilder floor = new(allTables, tables, suitableTables); // All available initially
 
         ConsoleKey key;
         bool done = false;
@@ -291,28 +301,27 @@ public class ReservationLogic
         {
             Console.Clear();
             Header.PrintHeader();
-            Console.WriteLine("\nUse ↑ ↓ ← → to move, ENTER to select, ESC to exit");
-            Console.WriteLine($"Seats remaining to assign: {numPeople}\n");
 
-            // 3️⃣ Draw the floorplan
             floor.DrawFloor();
 
-            // 4️⃣ Read user input
+            Console.WriteLine("\nUse the arrow keys to move.");
+            Console.WriteLine($"Seats remaining to assign: {numPeople}\n");
+
             key = Console.ReadKey(true).Key;
 
             switch (key)
             {
                 case ConsoleKey.UpArrow:
-                    floor.MoveCursor(0, -1);
+                    floor.MoveSelection(0, -1);
                     break;
                 case ConsoleKey.DownArrow:
-                    floor.MoveCursor(0, 1);
+                    floor.MoveSelection(0, 1);
                     break;
                 case ConsoleKey.LeftArrow:
-                    floor.MoveCursor(-1, 0);
+                    floor.MoveSelection(-1, 0);
                     break;
                 case ConsoleKey.RightArrow:
-                    floor.MoveCursor(1, 0);
+                    floor.MoveSelection(1, 0);
                     break;
                 case ConsoleKey.Enter:
                     var hovered = floor.AllFloorTables.FirstOrDefault(ft => ft.Status == FloorTableStatus.HoveredOn);
@@ -471,6 +480,8 @@ public class ReservationLogic
 
             for (int i = 0; i < filteredReservations.Count + 1; i++)
             {
+                Console.ResetColor();
+
                 if (i == selectedReservation)
                 {
                     Console.BackgroundColor = ConsoleColor.White;
