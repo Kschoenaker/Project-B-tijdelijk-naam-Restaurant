@@ -245,6 +245,34 @@ public class FloorBuilder
             Console.WriteLine($"Table:   {CurrentHoveredTable.Table.TablesName}");
             Console.WriteLine($"Seats:   {CurrentHoveredTable.Table.TableSeats}");
             Console.WriteLine(!AvailableFloorTables.Contains(CurrentHoveredTable) ? "This table can't be selected." : "Press ENTER to select this table.");
+
+            Console.WriteLine();
+
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("██");
+            Console.ResetColor();
+            Console.Write(" = Selected, ");
+
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("██");
+            Console.ResetColor();
+            Console.Write(" = Reserverd, ");
+
+            Console.BackgroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write("██");
+            Console.ResetColor();
+            Console.Write(" = Unavailable, ");
+
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("██");
+            Console.ResetColor();
+            Console.Write(" = Hovered on.");
+
+            Console.WriteLine();
         }
     }
 }
