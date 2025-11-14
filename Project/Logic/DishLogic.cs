@@ -6,7 +6,7 @@ public class DishLogic
         ThemeAccess themeaccess = new();
 
         int theme_id = themeaccess.GetThemeIdByName(theme);
-        DishModel dish = new(0, theme_id, dishname, dishprice, dishtype);
+        DishModel dish = new(0, dishname, dishprice, dishtype);
         AddDish(dish);
     }
     
@@ -14,5 +14,22 @@ public class DishLogic
     {
         DishAccess dishaccess = new();
         dishaccess.Add(dish);
+    }
+
+    public static List<DishModel> GetAll()
+    {
+        DishAccess dishAccess= new();
+        return dishAccess.GetAll();
+    }
+
+    public static List<DishModel> GetAllByTheme(string theme)
+    {
+        return null;
+    }
+
+    public static DishModel GetById(int id)
+    {
+        DishAccess dishAccess= new();
+        return dishAccess.GetById(id);
     }
 }

@@ -66,6 +66,8 @@ public class ReservationLogic
 
         List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
+        Dictionary<int, List<DishModel>> peopleDishSelection = ReservationPeopleDishAsk(people, date);
+
         // Add time to date
         date = date.AddHours(time.Hour).AddMinutes(time.Minute);
 
@@ -99,10 +101,64 @@ public class ReservationLogic
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
     }
 
-    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople)
+    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople, DateTime date)
     {
-        Dictionary<int, List<DishModel>> result = new();
+        var result = new Dictionary<int, List<DishModel>>();
 
+        ThemeCalanderModel? currentThemeCalander = ThemeCalanderLogic.GetCurrentThemeCalander();
+
+        if (currentThemeCalander == null)
+        {
+            var CalanderNotValidMenu = new OptionsMenu(
+                new() { "Continue"},
+                $"The dish theme is not set yet for that date."
+            );
+            return result;
+        }
+
+        ThemeModel currentTheme = ThemeLogic.GetByID(currentThemeCalander.Theme_ID);
+
+        var allDishes = DishLogic.GetAllByTheme(currentTheme.ThemeName); // Gets all dishes by the correct theme
+
+        for (int i = 0; i < numPeople; i++)
+        {
+            var mainChoiceMenu = new OptionsMenu(
+                new() { "Select no dishes", "Select dishes" },
+                $"Would you like to select dishes for person {i + 1}?"
+            );
+
+            if (mainChoiceMenu.Selected == 0)
+            {
+                result[i] = new List<DishModel>();
+                continue;
+            }
+
+            // Fixed 3-course system: Appetizer, Main Course, Dessert
+            string[] courseTypes = { "Appetizer", "Main Course", "Dessert" };
+            var selectedDishes = new List<DishModel>();
+
+            for (int c = 0; c < courseTypes.Length; c++)
+            {
+                string chosenType = courseTypes[c];
+                var wantCourseMenu = new OptionsMenu(
+                    new() { "No", "Yes" },
+                    $"Would person {i + 1} like a {chosenType}?"
+                );
+
+                if (wantCourseMenu.Selected == 0)
+                    continue;
+
+                var filteredDishes = allDishes.FindAll(d => d.DishType == chosenType);
+                var dishMenu = new OptionsMenu(
+                    filteredDishes.ConvertAll(d => d.DishName),
+                    $"Select a {chosenType} for person {i + 1}:"
+                );
+
+                selectedDishes.Add(filteredDishes[dishMenu.Selected]);
+            }
+
+            result[i] = selectedDishes;
+        }
         return result;
     }
 
