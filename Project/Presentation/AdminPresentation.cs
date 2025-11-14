@@ -356,7 +356,7 @@ public static void AddDishesToTheme(ThemeModel theme)
         Console.WriteLine("\nGerecht succesvol aangemaakt!");
         Console.WriteLine("nog regelen dat hij het nieuwe dish toevoegt");
 
-        DishModel dishModel = new DishModel(0, theme.ID, dishName, price, dishType);
+        DishModel dishModel = new DishModel(0, dishName, price, dishType);
         DishLogic.AddDish(dishModel);
 
     }

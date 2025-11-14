@@ -5,6 +5,8 @@ public class DishModel
     public double DishPrice { get; set; }
     public string DishType { get; set; }
 
+    public DishModel() { }
+ 
     public DishModel(int id, string dishName, double dishPrice, string dishType)
     {
         ID = id;
