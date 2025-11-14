@@ -95,7 +95,7 @@ public class ReservationPresentaion
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("╔════════╦════════════════════╦══════════════╦══════════════════════════╦════════════╦══════════╦══════════════╗");
 
-        string lineToPrint = "║   ID   ║       Time         ║  # People    ║         Remark           ║   Status   ║   User   ║   Tables     ║";
+        string lineToPrint = "║   ID   ║       Time         ║  # People    ║         Remark           ║   Status   ║   User   ║   Tables     ";
         string[] lineParts = lineToPrint.Split("║");
 
         //Console.Write("║");
@@ -112,7 +112,9 @@ public class ReservationPresentaion
                 Console.ResetColor();
             }
 
-            Console.Write(lineParts[i] + "║");
+            Console.Write(lineParts[i]);
+            Console.ResetColor();
+            Console.Write("║");
         }
         Console.WriteLine();
 
@@ -122,14 +124,10 @@ public class ReservationPresentaion
 
     public static void PrintReservationTableOneLine(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
     {
-        Console.ForegroundColor = ConsoleColor.White;
-
         string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
         tableList = TrimToLength(tableList, 12);
 
         Console.WriteLine($"║ {reservation.ID,-6} ║  {reservation.Time:yyyy-MM-dd HH:mm}  ║ {reservation.NumPeople,-12} ║ {TrimToLength(reservation.Remark, 24),-24} ║ {TrimToLength(reservation.Status, 10),-10} ║ {user.Name,-8} ║ {tableList,-12} ║");
-
-        Console.ResetColor();
     }
 
     public static void PrintReservationTableFooter()
