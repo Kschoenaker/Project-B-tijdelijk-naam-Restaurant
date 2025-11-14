@@ -21,4 +21,15 @@ public class DishLogic
         DishAccess dishAccess= new();
         return dishAccess.GetAll();
     }
+
+    public static List<DishModel> GetAllByTheme(string theme)
+    {
+        return null;
+    }
+
+    public static DishModel GetById(int id)
+    {
+        DishAccess dishAccess= new();
+        return dishAccess.GetById(id);
+    }
 }

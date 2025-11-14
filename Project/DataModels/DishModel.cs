@@ -1,3 +1,8 @@
+public enum DishTypeEnum
+{
+    
+}
+
 public class DishModel
 {
     public int ID { get; set; }

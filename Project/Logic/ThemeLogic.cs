@@ -44,8 +44,6 @@ public class ThemeLogic
     }
     public int ThemeCheck()
     {
-
-
         ThemeAccess themeaccess = new ThemeAccess();
         int number = themeaccess.GetLastInsertedId();
         return number;
@@ -196,6 +194,12 @@ public class ThemeLogic
     }
 
 
+    }
+
+    public static ThemeModel GetByID(int id)
+    {
+        ThemeAccess themeAccess= new();
+        return themeAccess.GetByThemeID(id);
     }
 
 

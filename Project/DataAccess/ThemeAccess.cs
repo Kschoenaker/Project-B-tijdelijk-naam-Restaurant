@@ -42,6 +42,12 @@ public class ThemeAccess
         return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).ToList();
     }
 
+    public ThemeModel GetByThemeID(int themeId)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeID";
+        return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).FirstOrDefault();
+    }
+
     public ThemeModel GetThemeByName(string themeName)
     {
         string sql = $"SELECT * FROM {Table} WHERE ThemeName = @ThemeName";

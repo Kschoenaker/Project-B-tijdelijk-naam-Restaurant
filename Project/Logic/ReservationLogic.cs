@@ -66,7 +66,7 @@ public class ReservationLogic
 
         List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
-        Dictionary<int, List<DishModel>> peopleDishSelection = ReservationPeopleDishAsk(people);
+        Dictionary<int, List<DishModel>> peopleDishSelection = ReservationPeopleDishAsk(people, date);
 
         // Add time to date
         date = date.AddHours(time.Hour).AddMinutes(time.Minute);
@@ -101,10 +101,24 @@ public class ReservationLogic
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
     }
 
-    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople)
+    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople, DateTime date)
     {
         var result = new Dictionary<int, List<DishModel>>();
-        var allDishes = DishLogic.GetAll();
+
+        ThemeCalanderModel? currentThemeCalander = ThemeCalanderLogic.GetCurrentThemeCalander();
+
+        if (currentThemeCalander == null)
+        {
+            var CalanderNotValidMenu = new OptionsMenu(
+                new() { "Continue"},
+                $"The dish theme is not set yet for that date."
+            );
+            return result;
+        }
+
+        ThemeModel currentTheme = ThemeLogic.GetByID(currentThemeCalander.Theme_ID);
+
+        var allDishes = DishLogic.GetAllByTheme(currentTheme.ThemeName); // Gets all dishes by the correct theme
 
         for (int i = 0; i < numPeople; i++)
         {
