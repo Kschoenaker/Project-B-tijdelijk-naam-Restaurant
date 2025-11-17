@@ -61,7 +61,6 @@ public class DishLogic
             ThemeLogic.Add(themeModel);
         }
 
-        // 20 dishes: (DishName, Price, DishTypeEnum)
         List<(string Name, double Price, DishTypeEnum Type, string Theme)> dishes = new()
         {
             // Italian
