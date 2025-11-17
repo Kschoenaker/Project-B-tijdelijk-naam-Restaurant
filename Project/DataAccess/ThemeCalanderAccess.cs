@@ -7,7 +7,7 @@ public class ThemeCalanderAccess
 {
     private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
 
-    private string Table = "ThemeCalander";
+    private string Table = "ThemeCalendar";
 
     public void Add( ThemeCalanderModel themecalandermodel)
     {
@@ -54,7 +54,7 @@ public int? GetIDByDatetime(DateTime date)
 
     public List<ThemeCalanderModel> GetAllThemeDate()
     {
-    string sql = $"SELECT ThemeDate FROM {Table}";
+    string sql = $"SELECT * FROM {Table}";
     return _connection.Query<ThemeCalanderModel>(sql).ToList();
     }
 
