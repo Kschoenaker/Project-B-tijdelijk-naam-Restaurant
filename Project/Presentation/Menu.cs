@@ -72,6 +72,7 @@ static class Menu
                                 UserLogic.LogOut();
                                 break;
                             case 3:
+                                UserLogic.LogOut();
                                 runCode = false;
                                 break;
                         }
