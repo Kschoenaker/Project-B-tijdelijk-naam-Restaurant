@@ -1,6 +1,8 @@
 public enum DishTypeEnum
 {
-    
+    Appetizer,
+    MainCourse,
+    Dessert
 }
 
 public class DishModel

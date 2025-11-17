@@ -1,5 +1,11 @@
-public static class ThemeDishLogic
+public static class DishThemeRecordsLogic
 {
+    public static void Add(DishThemeRecordModel record)
+    {
+        DishThemeRecordsAccess dishThemeRecordsAccess = new DishThemeRecordsAccess();
+        dishThemeRecordsAccess.Add(record);
+    }
+
     public static List<DishModel> GetDishesByThemeID(int themeID)
     {
         DishThemeRecordsAccess access = new DishThemeRecordsAccess();
