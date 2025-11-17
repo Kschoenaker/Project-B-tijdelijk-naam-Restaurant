@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 public class ThemeLogic
 {
     public static ThemeModel Add(ThemeModel themeModel)
@@ -204,25 +206,29 @@ public class ThemeLogic
     // Shiv code 
     public static void Themeoverview()
     {
+
         int year = 2025;
+    
 
         // Row 0 = year navigation, rows 1-12 = months
-        List<List<string>> maanden = new List<List<string>>
-        {
-            new List<string>() { " <---", "2025", "--->" },  // year row
-            new List<string> { "Januari :", "-" },
-            new List<string> { "Februari :", "-" },
-            new List<string> { "Maart :", "-" },
-            new List<string> { "April :", "-" },
-            new List<string> { "Mei :", "-" },
-            new List<string> { "Juni :", "-" },
-            new List<string> { "Juli :", "-" },
-            new List<string> { "Augustus :", "-" },
-            new List<string> { "September :", "-" },
-            new List<string> { "Oktober :", "-" },
-            new List<string> { "November :", "-" },
-            new List<string> { "December :", "-" }
-        };
+        List<List<string>> maanden = GetMonths(year);
+        
+        // new List<List<string>>
+        // {
+        //     new List<string>() { " <---", "2025", "--->" },  // year row
+        //     new List<string> { "Januari :", "-" },
+        //     new List<string> { "Februari :", "-" },
+        //     new List<string> { "Maart :", "-" },
+        //     new List<string> { "April :", "-" },
+        //     new List<string> { "Mei :", "-" },
+        //     new List<string> { "Juni :", "-" },
+        //     new List<string> { "Juli :", "-" },
+        //     new List<string> { "Augustus :", "-" },
+        //     new List<string> { "September :", "-" },
+        //     new List<string> { "Oktober :", "-" },
+        //     new List<string> { "November :", "-" },
+        //     new List<string> { "December :", "-" }
+        // };
 
         int selectedRow = 0;
         int selectedCol = 1;
@@ -231,11 +237,10 @@ public class ThemeLogic
         while (true)
         {
             Console.Clear();
-            maanden[0][1] = year.ToString(); // update year dynamically
+            maanden[0][1] = year.ToString();
 
             Console.WriteLine("Use ↑ / ↓ to move, ← / → to move selection, Enter to confirm:\n");
 
-            // Display all rows
             for (int i = 0; i < maanden.Count; i++)
             {
                 for (int j = 0; j < maanden[i].Count; j++)
@@ -254,7 +259,6 @@ public class ThemeLogic
                 Console.WriteLine();
             }
 
-            // Input handling
             key = Console.ReadKey(true).Key;
 
             switch (key)
@@ -278,7 +282,7 @@ public class ThemeLogic
                     if (selectedRow == 0 && selectedCol == 0)
                     {
                         year--;
-                        ResetMonths(ref maanden);
+                        maanden =  GetMonths(year);
                     }
                     break;
 
@@ -289,7 +293,7 @@ public class ThemeLogic
                     if (selectedRow == 0 && selectedCol == 2)
                     {
                         year++;
-                        ResetMonths(ref maanden);
+                        maanden =  GetMonths(year);
                     }
                     break;
 
@@ -297,18 +301,56 @@ public class ThemeLogic
                     if (selectedCol == 1 && selectedRow != 0)
                     {
                         string theme = Chooseoption();
-                        maanden[selectedRow][1] = theme;
+                        ThemeAccess access = new();
+                        ThemeCalanderAccess themecalanderaccess   = new();
+                        DateTime time = new(year, selectedRow, 1);
+ 
+                        ThemeCalanderModel model = new(0,time, access.GetThemeByName(theme).ID );
+                        if (maanden[selectedRow][1] != ""){
+
+                        themecalanderaccess.Update(model);
+                        }
+                        else
+                        {
+                            themecalanderaccess.Add(model);
+                        }
+                        maanden = GetMonths(year);
                     }
                     break;
             }
         }
     }
+ 
 
-    public static void ResetMonths(ref List<List<string>> maanden)
+    public static List<List<string>> GetMonths( int year)
     {
-        maanden = new List<List<string>>
+
+        ThemeCalanderAccess access = new ThemeCalanderAccess();
+
+        ThemeAccess themeacces = new ThemeAccess();
+
+        List<ThemeCalanderModel> alldates = access.GetAllThemeDate();
+
+        List<ThemeCalanderModel> validdates = new();
+
+        for( var  i = 0 ; i < alldates.Count; i++)
         {
-            new List<string>() { " <---", "YEAR", "--->" },
+
+            if (alldates[i].ThemeDate.Year == year )
+            {
+                validdates.Add(alldates[i]);
+
+            }
+        }
+        
+
+
+
+
+
+        List<List<string>> maanden = new List<List<string>>
+        {
+            new List<string>() { $" <---", year.ToString(), "--->" },
             new List<string> { "Januari :", "-" },
             new List<string> { "Februari :", "-" },
             new List<string> { "Maart :", "-" },
@@ -322,6 +364,18 @@ public class ThemeLogic
             new List<string> { "November :", "-" },
             new List<string> { "December :", "-" }
         };
+
+        for( var  i = 0 ; i < validdates.Count; i++)
+        {
+            int themeid = validdates[i].Theme_ID;
+            Console.WriteLine(themeid);
+            string theme = themeacces.GetByThemeID(themeid).ThemeName;
+            maanden[validdates[i].ThemeDate.Month  ][1] = theme;
+        }
+        
+
+        
+        return maanden;
     }
 
     public static string Chooseoption()
@@ -372,14 +426,11 @@ public class ThemeLogic
 
     public static string Choosetheme()
     {
-        List<string> themes = new List<string>
-        {
-            "Italian", "Mexican", "French", "Indian", "Thai", "Greek",
-            "Japanese", "Spanish", "Chinese", "Lebanese", "American",
-            "Moroccan", "Korean", "Turkish", "Vietnamese", "Brazilian",
-            "Mediterranean", "Caribbean", "German", "Russian"
-        };
 
+        ThemeAccess access = new();
+
+        
+        List<string> themes = access.GetAllThemeNames();
         int selectedIndex = 0;
         ConsoleKey key;
 

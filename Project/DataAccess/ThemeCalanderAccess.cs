@@ -16,7 +16,15 @@ public class ThemeCalanderAccess
             VALUES (@ThemeDate,@Theme_ID)";
         _connection.Execute(sql, themecalandermodel);
     }
-
+    public void UpdateWithoutID( ThemeCalanderModel themecalandermodel)
+    {
+        string sql = $@"
+            UPDATE {Table}
+            SET ThemeDate = @ThemeDate
+            Theme_ID = @Theme_ID
+            WHERE ThemeDate = @ThemeDate";
+        _connection.Execute(sql, themecalandermodel);
+    }
     public void Update( ThemeCalanderModel themecalandermodel)
     {
         string sql = $@"
@@ -52,11 +60,11 @@ public int? GetIDByDatetime(DateTime date)
         return _connection.Query<ThemeCalanderModel>(sql, new { ThemeName = themeid }).ToList();
     }
 
-    public List<ThemeCalanderModel> GetAllThemeDate()
-    {
-    string sql = $"SELECT ThemeDate FROM {Table}";
+public List<ThemeCalanderModel> GetAllThemeDate()
+{
+    string sql = $"SELECT ID, ThemeDate, Theme_ID FROM {Table}";
     return _connection.Query<ThemeCalanderModel>(sql).ToList();
-    }
+}
 
 
 
@@ -65,6 +73,5 @@ public int? GetIDByDatetime(DateTime date)
         string sql = $"SELECT MAX(Id) FROM {Table}";
         return _connection.ExecuteScalar<int>(sql);
     }
-
 
 }
