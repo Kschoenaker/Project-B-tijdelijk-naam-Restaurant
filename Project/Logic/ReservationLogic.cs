@@ -99,6 +99,24 @@ public class ReservationLogic
 
         // Save table records
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
+
+        // Save dishes
+        foreach (var kvp in peopleDishSelection)
+        {
+            int personId = kvp.Key;
+            List<DishModel> dishes = kvp.Value;
+
+            if (dishes == null || dishes.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (DishModel dish in dishes)
+            {
+                ReservationRecordsModel reservationRecords = new ReservationRecordsModel(0, dish.ID, reservation.ID);
+                ReservationRecordsLogic.Add(reservationRecords);
+            }
+        }
     }
 
     public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople, DateTime date)
