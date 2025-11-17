@@ -12,23 +12,23 @@ public class DishThemeRecordsAccess
     public void Add(DishThemeRecordModel item)
     {
         string sql = $@"
-            INSERT INTO {Table} (Time, NumPeople, Remark, Status, Users_ID)
-            VALUES (@Time, @NumPeople, @Remark, @Status, @Users_ID)";
+            INSERT INTO {Table} (Dish_ID, Theme_ID)
+            VALUES (@Dish_ID, @Theme_ID)";
         _connection.Execute(sql, item);
     }
 
-    public void Update(DishThemeRecordModel item)
-    {
-        string sql = $@"
-            UPDATE {Table}
-            SET Time = @Time,
-                NumPeople = @NumPeople,
-                Remark = @Remark,
-                Status = @Status,
-                Users_ID = @Users_ID
-            WHERE ID = @ID";
-        _connection.Execute(sql, item);
-    }
+    // public void Update(DishThemeRecordModel item)
+    // {
+    //     string sql = $@"
+    //         UPDATE {Table}
+    //         SET Time = @Time,
+    //             NumPeople = @NumPeople,
+    //             Remark = @Remark,
+    //             Status = @Status,
+    //             Users_ID = @Users_ID
+    //         WHERE ID = @ID";
+    //     _connection.Execute(sql, item);
+    // }
 
     public void Delete(DishThemeRecordModel item)
     {

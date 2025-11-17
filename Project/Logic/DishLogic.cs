@@ -138,6 +138,7 @@ public class DishLogic
             int themeID = ThemeLogic.GetByName(dish.Theme).ID;
             int dishID = GetByName(dish.Name).ID;
             DishThemeRecordModel dishThemeRecord = new DishThemeRecordModel(0, dishID, themeID);
+            DishThemeRecordsLogic.Add(dishThemeRecord);
         }
     }
 }

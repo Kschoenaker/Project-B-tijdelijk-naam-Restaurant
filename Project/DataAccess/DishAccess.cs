@@ -12,8 +12,8 @@ public class DishAccess
     public void Add(DishModel dish)
     {
         string sql = $@"
-            INSERT INTO {Table} (Theme_ID, DishName, DishPrice, DishType)
-            VALUES (@Theme_ID, @DishName, @DishPrice, @DishType)";
+            INSERT INTO {Table} (DishName, DishPrice, DishType)
+            VALUES (@DishName, @DishPrice, @DishType)";
         _connection.Execute(sql, dish);
     }
 
