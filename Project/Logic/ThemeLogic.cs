@@ -298,21 +298,34 @@ public class ThemeLogic
                     break;
 
                 case ConsoleKey.Enter:
-                    if (selectedCol == 1 && selectedRow != 0)
+                    if (selectedCol == 1 && selectedRow != 0 && year >= 2025)
                     {
                         string theme = Chooseoption();
                         ThemeAccess access = new();
                         ThemeCalanderAccess themecalanderaccess   = new();
                         DateTime time = new(year, selectedRow, 1);
- 
+                        if (theme == "-"  && maanden[selectedRow][1] != "-" )
+                        {
+                            ThemeCalanderModel model = new(0,time, access.GetThemeByName(maanden[selectedRow][1]).ID );
+                            themecalanderaccess.DeleteWithotID( model);
+                        }
+                        else if(theme == "-" && maanden[selectedRow][1] == "-")
+                        {
+                            break;
+                        }
+                        else{
                         ThemeCalanderModel model = new(0,time, access.GetThemeByName(theme).ID );
-                        if (maanden[selectedRow][1] != ""){
 
-                        themecalanderaccess.Update(model);
+                        if (maanden[selectedRow][1] != "-" ){
+                        themecalanderaccess.UpdateWithoutID(model);
                         }
                         else
                         {
+                            // System.Console.WriteLine("Geen thema, add");
+                            // Thread.Sleep(2000);
+
                             themecalanderaccess.Add(model);
+                        }
                         }
                         maanden = GetMonths(year);
                     }
@@ -418,7 +431,7 @@ public class ThemeLogic
 
                 case ConsoleKey.Enter:
                     if (selectedIndex == 0)
-                        return "";
+                        return "-";
                     return Choosetheme();
             }
         }

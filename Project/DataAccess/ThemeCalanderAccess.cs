@@ -20,7 +20,7 @@ public class ThemeCalanderAccess
     {
         string sql = $@"
             UPDATE {Table}
-            SET ThemeDate = @ThemeDate
+            SET ThemeDate = @ThemeDate ,
             Theme_ID = @Theme_ID
             WHERE ThemeDate = @ThemeDate";
         _connection.Execute(sql, themecalandermodel);
@@ -42,6 +42,15 @@ public class ThemeCalanderAccess
             DELETE FROM {Table}
             WHERE ID = @ID";
         _connection.Execute(sql, new { themecalandermodel.ID });
+
+    }
+    public void DeleteWithotID( ThemeCalanderModel themecalandermodel)
+    {
+        // _connection.Open();
+        string sql = $@"
+            DELETE FROM {Table}
+            WHERE ThemeDate  = @ThemeDate";
+        _connection.Execute(sql, new { themecalandermodel.ThemeDate });
 
     }
 
