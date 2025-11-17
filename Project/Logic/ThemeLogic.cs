@@ -198,8 +198,14 @@ public class ThemeLogic
 
     public static ThemeModel GetByID(int id)
     {
-        ThemeAccess themeAccess= new();
+        ThemeAccess themeAccess = new();
         return themeAccess.GetByThemeID(id);
+    }
+
+    public static ThemeModel GetByName(string name)
+    {
+        ThemeAccess themeAccess= new();
+        return themeAccess.GetThemeByName(name);
     }
 
 
