@@ -42,6 +42,12 @@ public class ThemeAccess
         return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).ToList();
     }
 
+    public ThemeModel GetByThemeID(int themeId)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeID";
+        return _connection.Query<ThemeModel>(sql, new { ThemeId = themeId }).FirstOrDefault();
+    }
+
     public ThemeModel GetThemeByName(string themeName)
     {
         string sql = $"SELECT * FROM {Table} WHERE ThemeName = @ThemeName";
@@ -64,12 +70,14 @@ public class ThemeAccess
     string sql = $"SELECT ThemeName FROM {Table}";
     return _connection.Query<string>(sql).ToList();
     }
+    
+    public List<ThemeModel> GetAllThemes()
+    {
+    string sql = $"SELECT * FROM {Table}";
+    return  _connection.Query<ThemeModel>(sql).ToList();
+    }
 
-    // public List<ThemeModel> GetWithID(int ID){
 
-
-    // // make list with all the dishes in this theme
-    // }
 
 
     public int GetLastInsertedId()

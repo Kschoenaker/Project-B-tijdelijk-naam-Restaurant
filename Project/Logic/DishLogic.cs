@@ -1,13 +1,11 @@
 public static class DishLogic
 {
-    public static ThemeAccess newConnect = new();
+    public static DishAccess newConnect = new();
 
-    public static void AddDish(string theme, string dishname, double dishprice, string dishtype)
+    public static void AddDish(string dishname, double dishprice, string dishtype)
     {
-        ThemeAccess themeaccess = new();
-
-        int theme_id = themeaccess.GetThemeIdByName(theme);
-        DishModel dish = new( theme_id, dishname, dishprice, dishtype);
+        //int theme_id = themeaccess.GetThemeIdByName(theme);
+        DishModel dish = new( 0, dishname, dishprice, dishtype);
         AddDish(dish);
     }
     
@@ -19,13 +17,20 @@ public static class DishLogic
 
         public static void GetThemeDishes(string themeName)
     {
-        int ThemeId = newConnect.GetThemeIdByName(themeName);
+        ThemeModel FoundTheme = ThemeLogic.GetByName(themeName);
 
-        
-        
+        if (FoundTheme is null)
+        {
+            return;
+        }
 
-        // hoe krijg ik de dishes van deze theme
+        int ThemeID = FoundTheme.ID; 
+
+        List<DishModel> ThemesDishes = ThemeDishLogic.GetDishesByThemeID(ThemeID);
+
     }
+
+
 
     public static bool ValidateDishName(string name)
     {
@@ -67,4 +72,20 @@ public static class DishLogic
 
 
     
+    public static List<DishModel> GetAll()
+    {
+        DishAccess dishAccess= new();
+        return dishAccess.GetAll();
+    }
+
+    public static List<DishModel> GetAllByTheme(string theme)
+    {
+        return null;
+    }
+
+    public static DishModel GetById(int id)
+    {
+        DishAccess dishAccess= new();
+        return dishAccess.GetById(id);
+    }
 }

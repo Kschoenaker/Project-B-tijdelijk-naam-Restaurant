@@ -1,5 +1,6 @@
 public class ThemeLogic
 {
+    public static ThemeAccess LogicConnect = new();
     public static ThemeModel Add(ThemeModel themeModel)
     {
         ThemeAccess themeAccess = new ThemeAccess();
@@ -36,6 +37,7 @@ public class ThemeLogic
         }
 
     }
+    
     public int? CheckIDbyname(string theme)
     {
         ThemeAccess access = new();
@@ -44,8 +46,6 @@ public class ThemeLogic
     }
     public int ThemeCheck()
     {
-
-
         ThemeAccess themeaccess = new ThemeAccess();
         int number = themeaccess.GetLastInsertedId();
         return number;
@@ -198,5 +198,30 @@ public class ThemeLogic
 
     }
 
+    public static ThemeModel GetByID(int id)
+    {
+        ThemeAccess themeAccess= new();
+        return themeAccess.GetByThemeID(id);
+    }
 
+    public static ThemeModel GetByName(string themeName )
+    {
+        return LogicConnect.GetThemeByName(themeName);
+    }
+
+    public List<ThemeModel> AllThemes()
+    {
+        return LogicConnect.GetAllThemes();
+        
+    }
+
+
+    public static bool IsThemeNameValid(string themeName)
+    {
+        if (themeName == "")
+        {
+            return false;
+        }
+        return true;
+    }
 }

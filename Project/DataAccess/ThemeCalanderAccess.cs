@@ -52,10 +52,10 @@ public int? GetIDByDatetime(DateTime date)
         return _connection.Query<ThemeCalanderModel>(sql, new { ThemeName = themeid }).ToList();
     }
 
-    public List<DateTime> GetAllThemeDate()
+    public List<ThemeCalanderModel> GetAllThemeDate()
     {
     string sql = $"SELECT ThemeDate FROM {Table}";
-    return _connection.Query<DateTime>(sql).ToList();
+    return _connection.Query<ThemeCalanderModel>(sql).ToList();
     }
 
 

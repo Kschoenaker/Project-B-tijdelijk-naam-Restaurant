@@ -66,6 +66,8 @@ public class ReservationLogic
 
         List<TablesModel> selectedTables = ReservationTableSelect(tables, people);
 
+        Dictionary<int, List<DishModel>> peopleDishSelection = ReservationPeopleDishAsk(people, date);
+
         // Add time to date
         date = date.AddHours(time.Hour).AddMinutes(time.Minute);
 
@@ -97,6 +99,85 @@ public class ReservationLogic
 
         // Save table records
         TableRecordsLogic.AddTableRecords(records); // Use function from Table records logic
+
+        // Save dishes
+        foreach (var kvp in peopleDishSelection)
+        {
+            int personId = kvp.Key;
+            List<DishModel> dishes = kvp.Value;
+
+            if (dishes == null || dishes.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (DishModel dish in dishes)
+            {
+                ReservationRecordsModel reservationRecords = new ReservationRecordsModel(0, dish.ID, reservation.ID);
+                ReservationRecordsLogic.Add(reservationRecords);
+            }
+        }
+    }
+
+    public static Dictionary<int, List<DishModel>> ReservationPeopleDishAsk(int numPeople, DateTime date)
+    {
+        var result = new Dictionary<int, List<DishModel>>();
+
+        ThemeCalanderModel? currentThemeCalander = ThemeCalanderLogic.GetCurrentThemeCalander();
+
+        if (currentThemeCalander == null)
+        {
+            var CalanderNotValidMenu = new OptionsMenu(
+                new() { "Continue"},
+                $"The dish theme is not set yet for that date."
+            );
+            return result;
+        }
+
+        ThemeModel currentTheme = ThemeLogic.GetByID(currentThemeCalander.Theme_ID);
+
+        var allDishes = DishLogic.GetAllByTheme(currentTheme.ThemeName); // Gets all dishes by the correct theme
+
+        for (int i = 0; i < numPeople; i++)
+        {
+            var mainChoiceMenu = new OptionsMenu(
+                new() { "Select no dishes", "Select dishes" },
+                $"Would you like to select dishes for person {i + 1}?"
+            );
+
+            if (mainChoiceMenu.Selected == 0)
+            {
+                result[i] = new List<DishModel>();
+                continue;
+            }
+
+            // Fixed 3-course system: Appetizer, Main Course, Dessert
+            string[] courseTypes = { "Appetizer", "Main Course", "Dessert" };
+            var selectedDishes = new List<DishModel>();
+
+            for (int c = 0; c < courseTypes.Length; c++)
+            {
+                string chosenType = courseTypes[c];
+                var wantCourseMenu = new OptionsMenu(
+                    new() { "No", "Yes" },
+                    $"Would person {i + 1} like a {chosenType}?"
+                );
+
+                if (wantCourseMenu.Selected == 0)
+                    continue;
+
+                var filteredDishes = allDishes.FindAll(d => d.DishType == chosenType);
+                var dishMenu = new OptionsMenu(
+                    filteredDishes.ConvertAll(d => d.DishName),
+                    $"Select a {chosenType} for person {i + 1}:"
+                );
+
+                selectedDishes.Add(filteredDishes[dishMenu.Selected]);
+            }
+
+            result[i] = selectedDishes;
+        }
+        return result;
     }
 
     public static int ReservationPeopleAsk()
@@ -221,17 +302,61 @@ public class ReservationLogic
         return selectedTime;
     }
 
-    public static List<TablesModel> ReservationTableSelect(List<TablesModel> tables, int NumPeople)
+    public static List<TablesModel> GetAvailableTables(List<TablesModel> tables, int numPeople)
+    {
+        if (tables == null || tables.Count == 0)
+            return new();
+
+        // Exact seat match (e.g., 4 people → only 4-seat tables)
+        var exactMatch = tables.Where(t => t.TableSeats == numPeople).ToList();
+        if (exactMatch.Count > 0)
+            return exactMatch;
+
+        // If no exact match, find combinations that fit the number of people
+        List<TablesModel> result = new();
+        int remaining = numPeople;
+
+        // Sort from largest to smallest for greedy pick
+        var sortedTables = tables.OrderByDescending(t => t.TableSeats).ToList();
+
+        foreach (var table in sortedTables)
+        {
+            if (remaining <= 0) break;
+
+            // Take a table only if it helps fill the remaining seats
+            if (table.TableSeats <= remaining + 1) // +1 for some small tolerance
+            {
+                result.Add(table);
+                remaining -= table.TableSeats;
+            }
+        }
+
+        // If still not filled completely, try adding smallest tables left
+        if (remaining > 0)
+        {
+            foreach (var table in sortedTables.Where(t => !result.Contains(t)))
+            {
+                result.Add(table);
+                remaining -= table.TableSeats;
+                if (remaining <= 0) break;
+            }
+        }
+
+        return result;
+    }
+
+    public static List<TablesModel> ReservationTableSelect(List<TablesModel> tables, int numPeople)
     {
         List<TablesModel> selectedTablesList = new();
+
+        TableAccess tableAccess = new TableAccess();
+        List<TablesModel> allTables = tableAccess.GetAll();
 
         if (tables == null || tables.Count == 0)
             return null!;
 
-        List<TablesModel> suitableTables = tables
-            .Where(t => t.TableSeats >= NumPeople)
-            .OrderBy(t => t.TableSeats) // Prefer smallest that fits
-            .ToList();
+        // Get the tables that can be used for this reservation
+        List<TablesModel> suitableTables = GetAvailableTables(tables, numPeople);
 
         if (suitableTables.Count == 0)
         {
@@ -240,68 +365,69 @@ public class ReservationLogic
                 .ToList();
         }
 
-        int selectedTable = 0;
+        // Build the floor with positions and sizes
+        FloorBuilder floor = new(allTables, tables, suitableTables); // All available initially
+
         ConsoleKey key;
+        bool done = false;
 
         do
         {
             Console.Clear();
             Header.PrintHeader();
 
-            for (int i = 0; i < suitableTables.Count; i++)
-            {
-                if (i == selectedTable)
-                {
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.Black;
-                }
-                else
-                {
-                    Console.ResetColor();
-                }
+            floor.DrawFloor();
 
-                ReservationPresentaion.PrintReservationTable(suitableTables[i], i);
-            }
-
-            Console.ResetColor();
+            Console.WriteLine("\nUse the arrow keys to move.");
+            Console.WriteLine($"Seats remaining to assign: {numPeople}\n");
 
             key = Console.ReadKey(true).Key;
 
-            if (key == ConsoleKey.UpArrow)
+            switch (key)
             {
-                selectedTable = (selectedTable - 1 + suitableTables.Count) % suitableTables.Count;
-            }
-            else if (key == ConsoleKey.DownArrow)
-            {
-                selectedTable = (selectedTable + 1) % suitableTables.Count;
-            }
-            else if (key == ConsoleKey.Enter)
-            {
-                // 🍽️ Add the selected table
-                selectedTablesList.Add(suitableTables[selectedTable]);
-                NumPeople -= suitableTables[selectedTable].TableSeats;
-
-                suitableTables.RemoveAt(selectedTable);
-
-                // If no more people left to seat, stop function
-                if (NumPeople <= 0)
+                case ConsoleKey.UpArrow:
+                    floor.MoveSelection(0, -1);
                     break;
+                case ConsoleKey.DownArrow:
+                    floor.MoveSelection(0, 1);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    floor.MoveSelection(-1, 0);
+                    break;
+                case ConsoleKey.RightArrow:
+                    floor.MoveSelection(1, 0);
+                    break;
+                case ConsoleKey.Enter:
+                    var hovered = floor.AllFloorTables.FirstOrDefault(ft => ft.Status == FloorTableStatus.HoveredOn);
+                    if (hovered != null && floor.AvailableFloorTables.Contains(hovered))
+                    {
+                        selectedTablesList.Add(hovered.Table);
+                        numPeople -= hovered.Table.TableSeats;
 
-                // Refilter smaller tables if we still need seats
-                suitableTables = suitableTables
-                    .OrderByDescending(t => t.TableSeats)
-                    .ToList();
+                        floor.SelectedTables.Add(hovered);
+                        hovered.Status = FloorTableStatus.Reserved;
 
-                selectedTable = 0;
+                        // Remove from available
+                        floor.AvailableFloorTables.Remove(hovered);
+
+                        // Stop if all people are seated
+                        if (numPeople <= 0)
+                            done = true;
+                    }
+                    break;
+                case ConsoleKey.Escape:
+                    done = true;
+                    break;
             }
 
-        } while (suitableTables.Count > 0 && NumPeople > 0);
+        } while (!done);
 
         Console.ResetColor();
         Console.Clear();
 
         return selectedTablesList;
     }
+
 
     public static bool CancelReservation(ReservationModel reservation)
     {
@@ -428,6 +554,8 @@ public class ReservationLogic
 
             for (int i = 0; i < filteredReservations.Count + 1; i++)
             {
+                Console.ResetColor();
+
                 if (i == selectedReservation)
                 {
                     Console.BackgroundColor = ConsoleColor.White;

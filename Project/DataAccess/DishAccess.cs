@@ -17,6 +17,16 @@ public class DishAccess
         _connection.Execute(sql, dish);
     }
 
+    public List<DishModel> GetAll()
+    {
+        string sql = $@"SELECT * FROM {Table}";
+
+        _connection.Open();
+        var result = _connection.Query<DishModel>(sql);
+        _connection.Close();
+        return result.ToList();
+    }
+
 
 
     // public DishModel GetByEmail(string email)
@@ -25,11 +35,11 @@ public class DishAccess
     //     return _connection.QueryFirstOrDefault<DishModel>(sql, new { Email = email });
     // }
 
-    // public DishModel GetById(int id)
-    // {
-    //     string sql = $"SELECT * FROM {Table} WHERE id = @Id";
-    //     return _connection.QueryFirstOrDefault<DishModel>(sql, new { Id = id });
-    // }
+    public DishModel GetById(int id)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE id = @Id";
+        return _connection.QueryFirstOrDefault<DishModel>(sql, new { Id = id });
+    }
 
     // public void Update(DishModel account)
     // {

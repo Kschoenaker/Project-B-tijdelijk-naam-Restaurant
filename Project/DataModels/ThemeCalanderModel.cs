@@ -4,6 +4,8 @@ public class ThemeCalanderModel
     public DateTime ThemeDate { get; set; }
     public int Theme_ID { get; set; }
 
+    public ThemeCalanderModel() { }
+    
     public ThemeCalanderModel(int id, DateTime themeDate, int theme_ID)
     {
         ID = id;
