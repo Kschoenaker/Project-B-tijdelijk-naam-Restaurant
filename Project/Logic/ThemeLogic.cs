@@ -200,7 +200,7 @@ public class ThemeLogic
 
     public static ThemeModel GetByID(int id)
     {
-        ThemeAccess themeAccess= new();
+        ThemeAccess themeAccess = new();
         return themeAccess.GetByThemeID(id);
     }
 

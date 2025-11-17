@@ -44,7 +44,7 @@ public class TableUI<T>
     }
 
 
-    public void Start()
+    public T Start()
     {
         while (!exitLoop)
         {
@@ -61,11 +61,13 @@ public class TableUI<T>
 
             HandleInput();
         }
+
+        return Value;
     }
 
-    // ────────────────────────────────────────────
+    // --------------------------------------------
     // PRINTING
-    // ────────────────────────────────────────────
+    // --------------------------------------------
 
     private void PrintTitle()
     {
@@ -175,9 +177,9 @@ public class TableUI<T>
         return str.Substring(0, length - 1) + "…";
     }
 
-    // ────────────────────────────────────────────
+    // --------------------------------------------
     // INPUT / LOGIC
-    // ────────────────────────────────────────────
+    // --------------------------------------------
 
     private void HandleInput()
     {
