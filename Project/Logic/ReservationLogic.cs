@@ -474,6 +474,24 @@ public class ReservationLogic
     public static void ShowReservation(List<ReservationModel> reservations)
     {
         Console.Clear();
+var table = new TableUI<ReservationModel>(
+    "Appitizer",
+    new Dictionary<string, string>
+    {
+        { "DishName", "Name" },
+        { "DishPrice", "Price" }
+    },
+    reservations.ToList(),
+    new List<string> { "Time", "Status", "ID" } // filterable properties
+);
+
+table.Start();
+
+Console.WriteLine("Selected column index: " + table.SelectedColumn);
+Console.WriteLine("Selected index: " + table.SelectedIndex);
+Console.WriteLine("Selected filter property: " + table.SelectedFilterProperty);
+        Console.WriteLine("Filter input: " + table.FilterInput);
+Console.ReadLine();
 
         if (reservations.Count <= 0)
         {
