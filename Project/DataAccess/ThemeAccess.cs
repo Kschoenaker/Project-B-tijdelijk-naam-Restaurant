@@ -65,6 +65,11 @@ public class ThemeAccess
     return _connection.Query<string>(sql).ToList();
     }
 
+    // public List<ThemeModel> GetWithID(int ID){
+
+
+    // // make list with all the dishes in this theme
+    // }
 
 
     public int GetLastInsertedId()

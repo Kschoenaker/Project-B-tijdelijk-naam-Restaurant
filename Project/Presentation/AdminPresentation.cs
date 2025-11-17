@@ -85,6 +85,36 @@ public static void AdminStartScreen()
         }
     }
 
+public static bool AdminMenuManagement(int selectedOption)
+    {
+        switch (selectedOption)
+                {
+            case 0:
+                Console.WriteLine("See all reservations");
+                ReservationLogic.HandleSeeAllReservation();
+                break;
+            case 1:
+                Console.WriteLine("Theme Management");
+                AdminPresentation.MenuManagement();
+                break;
+            case 2:
+                Console.WriteLine("Theme Planner");
+                break;
+            case 3:
+                Console.WriteLine("log out");
+                break;
+            default:
+                Console.WriteLine("Niet geldig!");
+                break;
+        }
+
+
+
+        Console.WriteLine("Press a key to continue...");
+        Console.ReadKey();
+        return true;
+    }
+
     // the theme and menu option screen 
 public static void MenuManagement()
     {
@@ -356,7 +386,7 @@ public static void AddDishesToTheme(ThemeModel theme)
         Console.WriteLine("\nGerecht succesvol aangemaakt!");
         Console.WriteLine("nog regelen dat hij het nieuwe dish toevoegt");
 
-        DishModel dishModel = new DishModel(0, theme.ID, dishName, price, dishType);
+        DishModel dishModel = new DishModel(theme.ID, dishName, price, dishType);
         DishLogic.AddDish(dishModel);
 
     }

@@ -29,6 +29,8 @@ static class LoginForm
                     {
                         // admin account log in
                         AdminPresentation.AdminStartScreen();
+                        //  new way of getting there
+                        //NavigationLogic.NavigateChoices("AdminMenu", AdminPresentation.AdminMenuManagement());
                     }
                     if (true)
                     {
