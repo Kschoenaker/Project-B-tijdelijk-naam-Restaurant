@@ -5,7 +5,11 @@ public static class AdminLogic
     // the going to menu's logic 
     public static bool IsAdmin(string username, string password)
     {
-        if (username == "Admin123" && password == "passAdmin123!")// admin username found in database is ok  
+        if (username == "admin123" && password == "passAdmin123!")// admin username found in database is ok  
+        { return true; }
+        if (username == "admin1!" && password == "Password1!")// admin username found in database is ok  
+        { return true; }
+        if (username == "admin1!" && password == "admin1!")// admin username found in database is ok  
         { return true; }
         return false;
 

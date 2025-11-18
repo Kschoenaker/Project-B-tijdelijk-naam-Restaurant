@@ -28,9 +28,11 @@ static class LoginForm
                     if (AdminLogic.IsAdmin(UserName , PassWord))
                     {
                         // admin account log in
-                        AdminPresentation.AdminStartScreen();
+                        //AdminPresentation.AdminStartScreen(); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //NavigationLogic.NavigateChoices("" , ThemeManagement)
+
                         //  new way of getting there
-                        //NavigationLogic.NavigateChoices("AdminMenu", AdminPresentation.AdminMenuManagement());
+                        NavigationLogic.NavigateChoices("AdminMenu", AdminPresentation.AdminMenuManagement);
                     }
                     if (true)
                     {

@@ -1,8 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 // Console.WriteLine("Welcome to this amazing program");
-//Menu.Start();
-//NavigationLogic.NavigateChoices("AdminMenu", AdminPresentation.AdminMenuManagement());
+Menu.Start();
 
-NavigationLogic.NavigateChoices("DishTypeSelect", DishManagment.ChoiceDishType);
 
 

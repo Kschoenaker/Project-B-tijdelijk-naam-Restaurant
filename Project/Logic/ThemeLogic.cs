@@ -209,7 +209,7 @@ public class ThemeLogic
         return LogicConnect.GetThemeByName(themeName);
     }
 
-    public List<ThemeModel> AllThemes()
+    public static List<ThemeModel> AllThemes()
     {
         return LogicConnect.GetAllThemes();
         
