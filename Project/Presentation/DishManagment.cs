@@ -6,7 +6,6 @@ public static class DishManagment
 
     public static void CreateNewDish(string dishType)
     {
-
         // ask input
         string dishName;
         string priceInput;
@@ -79,18 +78,24 @@ public static class DishManagment
         return true;
     }
 
+    // print all dishes in a overview 
+    public static void PrintAlldishes(){
 
+        List<DishModel> Alldishes  = DishLogic.GetAll();
 
-
-
-
-    public static void PrintAlldishes(List<DishModel> Alldishes){
-
-        
-
-
+        if (Alldishes.Count > 0)
+        {
+        foreach(DishModel dish in Alldishes)
+        {
+            Console.WriteLine($" {dish.DishName} - {dish.DishPrice} - {dish.DishType}");
+        }
+        }
+        else
+            {
+            Console.WriteLine($"You have no Dishes saved");
+                
+            }
     }
-
 
     }
 
