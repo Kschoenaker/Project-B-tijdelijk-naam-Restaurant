@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 public class ThemeLogic
 {
     public static ThemeAccess LogicConnect = new();
@@ -202,6 +204,288 @@ public class ThemeLogic
     {
         ThemeAccess themeAccess = new();
         return themeAccess.GetByThemeID(id);
+    }
+    // Shiv code 
+    public static void Themeoverview()
+    {
+
+        int year = 2025;
+    
+
+        // Row 0 = year navigation, rows 1-12 = months
+        List<List<string>> maanden = GetMonths(year);
+        
+        // new List<List<string>>
+        // {
+        //     new List<string>() { " <---", "2025", "--->" },  // year row
+        //     new List<string> { "Januari :", "-" },
+        //     new List<string> { "Februari :", "-" },
+        //     new List<string> { "Maart :", "-" },
+        //     new List<string> { "April :", "-" },
+        //     new List<string> { "Mei :", "-" },
+        //     new List<string> { "Juni :", "-" },
+        //     new List<string> { "Juli :", "-" },
+        //     new List<string> { "Augustus :", "-" },
+        //     new List<string> { "September :", "-" },
+        //     new List<string> { "Oktober :", "-" },
+        //     new List<string> { "November :", "-" },
+        //     new List<string> { "December :", "-" }
+        // };
+
+        int selectedRow = 0;
+        int selectedCol = 1;
+        ConsoleKey key;
+
+        while (true)
+        {
+            Console.Clear();
+            maanden[0][1] = year.ToString();
+
+            Console.WriteLine("Use ↑ / ↓ to move, ← / → to move selection, Enter to confirm:\n");
+
+            for (int i = 0; i < maanden.Count; i++)
+            {
+                for (int j = 0; j < maanden[i].Count; j++)
+                {
+                    bool isSelected = (i == selectedRow && j == selectedCol);
+
+                    if (isSelected)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+
+                    Console.Write($" {maanden[i][j]} ");
+                    Console.ResetColor();
+                }
+                Console.WriteLine();
+            }
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    selectedRow--;
+                    if (selectedRow < 0) selectedRow = 0;
+                    if (selectedCol >= maanden[selectedRow].Count) selectedCol = maanden[selectedRow].Count - 1;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    selectedRow++;
+                    if (selectedRow >= maanden.Count) selectedRow = maanden.Count - 1;
+                    if (selectedCol >= maanden[selectedRow].Count) selectedCol = maanden[selectedRow].Count - 1;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    selectedCol--;
+                    if (selectedCol < 0) selectedCol = 0;
+
+                    if (selectedRow == 0 && selectedCol == 0)
+                    {
+                        year--;
+                        maanden =  GetMonths(year);
+                    }
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    selectedCol++;
+                    if (selectedCol >= maanden[selectedRow].Count) selectedCol = maanden[selectedRow].Count - 1;
+
+                    if (selectedRow == 0 && selectedCol == 2)
+                    {
+                        year++;
+                        maanden =  GetMonths(year);
+                    }
+                    break;
+
+                case ConsoleKey.Enter:
+                    if (selectedCol == 1 && selectedRow != 0 && year >= 2025)
+                    {
+                        string theme = Chooseoption();
+                        ThemeAccess access = new();
+                        ThemeCalanderAccess themecalanderaccess   = new();
+                        DateTime time = new(year, selectedRow, 1);
+                        if (theme == "-"  && maanden[selectedRow][1] != "-" )
+                        {
+                            ThemeCalanderModel model = new(0,time, access.GetThemeByName(maanden[selectedRow][1]).ID );
+                            themecalanderaccess.DeleteWithotID( model);
+                        }
+                        else if(theme == "-" && maanden[selectedRow][1] == "-")
+                        {
+                            break;
+                        }
+                        else{
+                        ThemeCalanderModel model = new(0,time, access.GetThemeByName(theme).ID );
+
+                        if (maanden[selectedRow][1] != "-" ){
+                        themecalanderaccess.UpdateWithoutID(model);
+                        }
+                        else
+                        {
+                            // System.Console.WriteLine("Geen thema, add");
+                            // Thread.Sleep(2000);
+
+                            //testing
+
+                            themecalanderaccess.Add(model);
+                        }
+                        }
+                        maanden = GetMonths(year);
+                    }
+                    break;
+            }
+        }
+    }
+ 
+
+    public static List<List<string>> GetMonths( int year)
+    {
+
+        ThemeCalanderAccess access = new ThemeCalanderAccess();
+
+        ThemeAccess themeacces = new ThemeAccess();
+
+        List<ThemeCalanderModel> alldates = access.GetAllThemeDate();
+
+        List<ThemeCalanderModel> validdates = new();
+
+        for( var  i = 0 ; i < alldates.Count; i++)
+        {
+
+            if (alldates[i].ThemeDate.Year == year )
+            {
+                validdates.Add(alldates[i]);
+
+            }
+        }
+        
+
+
+
+
+
+        List<List<string>> maanden = new List<List<string>>
+        {
+            new List<string>() { $" <---", year.ToString(), "--->" },
+            new List<string> { "Januari :", "-" },
+            new List<string> { "Februari :", "-" },
+            new List<string> { "Maart :", "-" },
+            new List<string> { "April :", "-" },
+            new List<string> { "Mei :", "-" },
+            new List<string> { "Juni :", "-" },
+            new List<string> { "Juli :", "-" },
+            new List<string> { "Augustus :", "-" },
+            new List<string> { "September :", "-" },
+            new List<string> { "Oktober :", "-" },
+            new List<string> { "November :", "-" },
+            new List<string> { "December :", "-" }
+        };
+
+        for( var  i = 0 ; i < validdates.Count; i++)
+        {
+            int themeid = validdates[i].Theme_ID;
+            Console.WriteLine(themeid);
+            string theme = themeacces.GetByThemeID(themeid).ThemeName;
+            maanden[validdates[i].ThemeDate.Month  ][1] = theme;
+        }
+        
+
+        
+        return maanden;
+    }
+
+    public static string Chooseoption()
+    {
+        List<string> option = new List<string> { "Delete", "Change/Add theme" };
+
+        int selectedIndex = 0;
+        ConsoleKey key;
+
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("Use ↑ / ↓ to move, Enter to confirm:\n");
+
+            for (int i = 0; i < option.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+
+                Console.WriteLine(option[i]);
+                Console.ResetColor();
+            }
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    selectedIndex--;
+                    if (selectedIndex < 0) selectedIndex = 0;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    selectedIndex++;
+                    if (selectedIndex >= option.Count) selectedIndex = option.Count - 1;
+                    break;
+
+                case ConsoleKey.Enter:
+                    if (selectedIndex == 0)
+                        return "-";
+                    return Choosetheme();
+            }
+        }
+    }
+
+    public static string Choosetheme()
+    {
+
+        ThemeAccess access = new();
+
+        
+        List<string> themes = access.GetAllThemeNames();
+        int selectedIndex = 0;
+        ConsoleKey key;
+
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("Use ↑ / ↓ to move, Enter to confirm:\n");
+
+            for (int i = 0; i < themes.Count; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.Black;
+                }
+
+                Console.WriteLine(themes[i]);
+                Console.ResetColor();
+            }
+
+            key = Console.ReadKey(true).Key;
+
+            switch (key)
+            {
+                case ConsoleKey.UpArrow:
+                    selectedIndex--;
+                    if (selectedIndex < 0) selectedIndex = 0;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    selectedIndex++;
+                    if (selectedIndex >= themes.Count) selectedIndex = themes.Count - 1;
+                    break;
+
+                case ConsoleKey.Enter:
+                    return themes[selectedIndex];
+            }
+        }
     }
 
     public static ThemeModel GetByName(string themeName )
