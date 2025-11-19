@@ -22,8 +22,8 @@ public static class AdminPresentation
                 return false; // go back
                 // should go back lo log screen
         }
-        Console.WriteLine("Press a key to continue...");
-        Console.ReadKey();
+        //Console.WriteLine("Press a key to continue...");
+        //Console.ReadKey();
         return true;
     }
     public static bool ThemeManagement(int selectedOption)
@@ -43,8 +43,8 @@ public static class AdminPresentation
                 return false; // go back
                 // Go back to admin screen
         }
-        Console.WriteLine("Press a key to continue...");
-        Console.ReadKey();
+        //Console.WriteLine("Press a key to continue...");
+        //Console.ReadKey();
         return true;
     }
     public static void AdminStartScreen()
@@ -405,8 +405,8 @@ public static class AdminPresentation
 
 
 
-        Console.WriteLine("Press a key to continue...");
-        Console.ReadKey();
+        //Console.WriteLine("Press a key to continue...");
+        //Console.ReadKey();
         return true;
     }
 
@@ -428,8 +428,8 @@ public static class AdminPresentation
             case 2:
                 return false; // go back
         }
-        Console.WriteLine("Press a key to continue...");
-        Console.ReadKey();
+        //Console.WriteLine("Press a key to continue...");
+        //Console.ReadKey();
         return true;
     }
 
@@ -451,8 +451,8 @@ public static class AdminPresentation
                 case 2:
                     return false; // go back
             }
-            Console.WriteLine("Press a key to continue...");
-            Console.ReadKey();
+            //Console.WriteLine("Press a key to continue...");
+            //Console.ReadKey();
             return true;
         }
 
