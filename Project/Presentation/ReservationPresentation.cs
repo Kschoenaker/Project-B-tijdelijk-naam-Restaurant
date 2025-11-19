@@ -87,9 +87,12 @@ public class ReservationPresentaion
 
                 Console.WriteLine("Dishes:");
 
+                string[] courseOrder = { "Appetizer", "MainCourse", "Dessert" };
+
                 var grouped = dishes
                     .GroupBy(d => d.DishType)
-                    .OrderBy(g => g.Key);
+                    .OrderBy(g => Array.IndexOf(courseOrder, g.Key))
+                    .ToList();
 
                 foreach (var group in grouped)
                 {
