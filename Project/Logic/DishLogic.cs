@@ -80,7 +80,8 @@ public static class DishLogic
 
     public static List<DishModel> GetAllByTheme(string theme)
     {
-        return null;
+        DishAccess dishAccess= new();
+        return dishAccess.GetAllByName(theme);
     }
 
     public static DishModel GetById(int id)

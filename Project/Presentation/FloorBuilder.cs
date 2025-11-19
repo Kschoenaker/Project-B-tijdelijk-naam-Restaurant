@@ -266,8 +266,8 @@ public class FloorBuilder
             Console.ResetColor();
             Console.Write(" = Unavailable, ");
 
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Black;
             Console.Write("██");
             Console.ResetColor();
             Console.Write(" = Hovered on.");

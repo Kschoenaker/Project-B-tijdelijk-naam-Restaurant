@@ -134,9 +134,10 @@ public class ReservationLogic
             return result;
         }
 
-        ThemeModel currentTheme = ThemeLogic.GetByID(currentThemeCalander.Theme_ID);
+        List<DishModel> allDishes = DishThemeRecordsLogic.GetDishesByThemeID(currentThemeCalander.Theme_ID); // Gets all dishes by the correct theme
 
-        var allDishes = DishLogic.GetAllByTheme(currentTheme.ThemeName); // Gets all dishes by the correct theme
+        Console.WriteLine(allDishes.Count);
+        Console.ReadLine();
 
         for (int i = 0; i < numPeople; i++)
         {
@@ -157,7 +158,7 @@ public class ReservationLogic
 
             for (int c = 0; c < courseTypes.Length; c++)
             {
-                string chosenType = courseTypes[c];
+                string chosenType = courseTypes[c].Replace(" ", "");
                 var wantCourseMenu = new OptionsMenu(
                     new() { "No", "Yes" },
                     $"Would person {i + 1} like a {chosenType}?"
@@ -166,7 +167,14 @@ public class ReservationLogic
                 if (wantCourseMenu.Selected == 0)
                     continue;
 
+                if (allDishes == null)
+                    continue;
+
                 var filteredDishes = allDishes.FindAll(d => d.DishType == chosenType);
+
+                if (filteredDishes.Count == 0)
+                    continue;
+
                 var dishMenu = new OptionsMenu(
                     filteredDishes.ConvertAll(d => d.DishName),
                     $"Select a {chosenType} for person {i + 1}:"
@@ -507,10 +515,10 @@ public class ReservationLogic
             for (int i = 0; i < reservations.Count; i++)
             {
                 List<TableRecordsModel> tableRecords = TableRecordsLogic.GetTableRecordsByReservation(reservations[i].ID);
-    
+
                 List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
                 tablesDict.Add(reservations[i].ID, tablesForReservation);
-    
+
                 UsersModel reservationUser = UserLogic.GetUserByID(reservations[i].Users_ID);
                 usersDict.Add(reservations[i].ID, reservationUser);
             }
@@ -773,6 +781,9 @@ public class ReservationLogic
                 $"Tables ({tableList})",
                 "Dishes",
                 $"Remark: {reservation.Remark}",
+                reservation.Status == "Cancelled" 
+                    ? "Reservation cancelled" 
+                    : "Cancel reservation",
                 "Back"
             });
 
@@ -822,6 +833,12 @@ public class ReservationLogic
 
                 case 4:
                     reservation.Remark = ReservationRemarkAsk();
+                    break;
+                case 5:
+                    if (reservation.Status != "Cancelled")
+                    {
+                        CancelReservation(reservation);
+                    }
                     break;
             }
 

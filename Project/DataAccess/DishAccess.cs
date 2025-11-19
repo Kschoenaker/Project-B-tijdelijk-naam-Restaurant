@@ -47,6 +47,12 @@ public class DishAccess
         return _connection.QueryFirstOrDefault<DishModel>(sql, new { DishName = name });
     }
 
+    public List<DishModel> GetAllByName(string name)
+    {
+        string sql = $"SELECT * FROM {Table} WHERE DishName = @DishName";
+        return _connection.Query<DishModel>(sql, new { DishName = name }).ToList();
+    }
+
     // public void Update(DishModel account)
     // {
     //     string sql = $"UPDATE {Table} SET email = @EmailAddress, password = @Password, fullname = @FullName WHERE id = @Id";

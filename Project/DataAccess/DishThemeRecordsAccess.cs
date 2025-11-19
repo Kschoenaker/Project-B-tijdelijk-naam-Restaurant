@@ -40,7 +40,7 @@ public class DishThemeRecordsAccess
 
     public List<DishThemeRecordModel> GetByThemeID(int themeId)
     {
-        string sql = $"SELECT * FROM {Table} WHERE ID = @ThemeID";
-        return _connection.Query<DishThemeRecordModel>(sql, new { Theme_ID = themeId }).ToList();
+        string sql = $"SELECT * FROM {Table} WHERE Theme_ID = @ThemeID";
+        return _connection.Query<DishThemeRecordModel>(sql, new { ThemeID = themeId }).ToList();
     }
 }
