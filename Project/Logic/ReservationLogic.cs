@@ -53,7 +53,7 @@ public class ReservationLogic
         int people = ReservationPeopleAsk();
         DateTime date = ReservationDaySelect();
         DateTime time = ReservationTimeSelect();
-        string? remark = ReservationMarkAsk();
+        string? remark = ReservationRemarkAsk();
 
         // A check to make sure that there are avialable tables
         List<TablesModel> tables = TableLogic.GetUnreservedTablesByDate(date);
@@ -79,7 +79,7 @@ public class ReservationLogic
         {
             Console.Clear();
             Header.PrintHeader();
-            ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount);
+            ReservationPresentaion.PrintReservationConfirm(reservation, selectedTables, UserLogic.CurrentAccount, peopleDishSelection.Values.SelectMany(l => l).ToList());
             input = Console.ReadLine().ToUpper();
         } while (!(input == "Y" || input == "N"));
 
@@ -215,7 +215,7 @@ public class ReservationLogic
         return 0;
     }
 
-    public static string? ReservationMarkAsk()
+    public static string? ReservationRemarkAsk()
     {
         Console.Clear();
         Header.PrintHeader();
@@ -671,11 +671,13 @@ public class ReservationLogic
         int selectedInt = 0;
         ConsoleKey key;
 
+        List<DishModel> dishes = ReservationRecordsLogic.GetDishesByReservation(reservation.ID);
+
         do
         {
             Console.Clear();
             Header.PrintHeader();
-            ReservationPresentaion.PrintReservation(reservation, tables, user);
+            bool printCancel = ReservationPresentaion.PrintReservation(reservation, tables, user, dishes);
 
             if (reservation.Status == "Cancelled" || !CheckReservationCanBeCancelled(reservation))
             {
@@ -691,24 +693,26 @@ public class ReservationLogic
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    if (i == selectedInt)
+                    if (printCancel)
                     {
-                        Console.BackgroundColor = ConsoleColor.White;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                    }
-                    else
-                    {
-                        Console.ResetColor();
-                    }
-
-                    switch (i)
-                    {
-                        case 0:
-                            Console.WriteLine("Cancel reservation");
-                            break;
-                        case 1:
-                            Console.WriteLine("Back");
-                            break;
+                        if (i == selectedInt)
+                        {
+                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.ForegroundColor = ConsoleColor.Black;
+                        }
+                        else
+                        {
+                            Console.ResetColor();
+                        }
+                        switch (i)
+                        {
+                            case 0:
+                                Console.WriteLine("Cancel reservation");
+                                break;
+                            case 1:
+                                Console.WriteLine("Back");
+                                break;
+                        }
                     }
                 }
             }
@@ -751,5 +755,127 @@ public class ReservationLogic
                 }
             }
         } while (!SelectedBack);
+    }
+
+    public static void HandleChangeReservation(
+        ReservationModel reservation,
+        List<TablesModel> tables,
+        List<DishModel> dishes)
+    {
+        string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
+
+        OptionsMenu menu;
+
+        do
+        {
+            menu = new OptionsMenu(new List<string> {
+                $"People: {reservation.NumPeople}",
+                $"Date: {reservation.Time:dd/MM/yyyy}",
+                $"Tables ({tableList})",
+                "Dishes",
+                $"Remark: {reservation.Remark}",
+                "Back"
+            });
+
+            Console.Clear();
+
+            switch (menu.Selected)
+            {
+                case 0:
+                    int newNum = ReservationPeopleAsk();
+
+                    int TableSeats = tables.Sum(t => t.TableSeats);
+
+                    if (newNum > TableSeats)
+                    {
+                        Header.PrintHeader();
+                        Console.WriteLine("There are not enough seats for the tables you selected. Please select tables again");
+                        Console.ReadLine();
+                        var available = TableLogic.GetUnreservedTablesByDate(reservation.Time);
+                        tables = ReservationTableSelect(available, newNum);
+                    }
+                    reservation.NumPeople = newNum;
+                    break;
+
+                case 1:
+                    DateTime newTime = ReservationDaySelect();
+
+                    if (TableLogic.GetUnreservedTablesByDate(newTime).Sum(t => t.TableSeats) < reservation.NumPeople)
+                    {
+                        Header.PrintHeader();
+                        Console.WriteLine("Sorry, there is not enough space for this time.");
+                        Console.ReadLine();
+                        break;
+                    }
+                    reservation.Time = newTime
+                        .Add(ReservationTimeSelect().TimeOfDay);
+                    break;
+
+                case 2:
+                    var avail = TableLogic.GetUnreservedTablesByDate(reservation.Time);
+                    tables = ReservationTableSelect(avail, reservation.NumPeople);
+                    break;
+
+                case 3:
+                    var newDishes = ReservationPeopleDishAsk(reservation.NumPeople, reservation.Time);
+                    dishes = newDishes.Values.SelectMany(l => l).ToList();
+                    break;
+
+                case 4:
+                    reservation.Remark = ReservationRemarkAsk();
+                    break;
+            }
+
+            tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
+
+        }
+        while (menu.SelectedText != "Back");
+
+        // Save everything
+        UpdateReservation(reservation, tables, dishes);
+    }
+
+    public static void UpdateReservation(
+        ReservationModel reservation,
+        List<TablesModel> newTables,
+        List<DishModel> newDishSelection)
+    {
+        var reservationAccess = new ReservationAccess();
+        var tableRecordsAccess = new TableRecordsAccess();
+        var dishRecordsAccess = new ReservationRecordsAccess();
+
+        // UPDATE reservation data like date, remark, status, etc.
+        reservationAccess.Update(reservation);
+
+        // Remove old table links
+        var oldTableRecords = tableRecordsAccess.GetByReservation(reservation.ID);
+        foreach (var record in oldTableRecords)
+        {
+            tableRecordsAccess.Delete(record);
+        }
+
+        // Insert new table links
+        foreach (var table in newTables)
+        {
+            var newRecord = new TableRecordsModel(0, table.ID, reservation.ID);
+            tableRecordsAccess.Add(newRecord);
+        }
+
+        // Remove old dish entries
+        var oldDishRecords = dishRecordsAccess.GetAll()
+            .Where(r => r.Reservation_ID == reservation.ID)
+            .ToList();
+
+        foreach (var record in oldDishRecords)
+        {
+            dishRecordsAccess.Delete(record);
+        }
+
+        // Insert new dish entries
+        foreach (var dish in newDishSelection)
+        {
+            var newDishRecord = new ReservationRecordsModel(0, dish.ID, reservation.ID);
+            dishRecordsAccess.Add(newDishRecord);
+        }
     }
 }

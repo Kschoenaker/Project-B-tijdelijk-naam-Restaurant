@@ -11,7 +11,7 @@ public class OptionsMenu
         Run();
     }
 
-    private void Run()
+    public void Run()
     {
         int selectedOption = 0;
         ConsoleKey key;

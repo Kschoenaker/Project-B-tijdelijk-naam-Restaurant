@@ -7,7 +7,7 @@ public class ThemeCalanderAccess
 {
     private SqliteConnection _connection = new SqliteConnection($"Data Source=DataSources/project.db");
 
-    private string Table = "ThemeCalander";
+    private string Table = "ThemeCalendar";
 
     public void Add( ThemeCalanderModel themecalandermodel)
     {

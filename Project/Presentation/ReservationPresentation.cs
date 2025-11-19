@@ -55,25 +55,53 @@ public class ReservationPresentaion
         Console.WriteLine($"{counter + 1}. {table.TablesName} (has {table.TableSeats} seats)");
     }
 
-    public static void PrintReservation(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
+    public static bool PrintReservation(ReservationModel reservation, List<TablesModel> tables, UsersModel user, List<DishModel> dishes, bool CanChangeReservation = true)
     {
-        Console.WriteLine("Reservation:");
-        Console.WriteLine($"Name: {user.Name}.");
-        Console.WriteLine($"Amount of people coming: {reservation.NumPeople}");
-        Console.WriteLine($"Status: {reservation.Status}");
-        Console.WriteLine($"Reservation date: {reservation.Time.ToString("dd/MM/yyyy")}");
-
         string tableList = tables.Count > 0 ? string.Join(", ", tables.Select(t => t.TablesName)) : "—";
         tableList = TrimToLength(tableList, 12);
 
-        Console.WriteLine($"Tables {tableList}.");
-
-        if (reservation.Remark is not null && reservation.Remark != "")
+        if (ReservationLogic.CheckReservationCanBeCancelled(reservation) && CanChangeReservation)
         {
-            Console.WriteLine($"Remark: {reservation.Remark}");
-        }
+            ReservationLogic.HandleChangeReservation(reservation, tables, dishes);
 
-        Console.WriteLine();
+            return false;
+        }
+        else 
+        {
+            Console.WriteLine("Reservation:");
+            Console.WriteLine($"Name: {user.Name}");
+            Console.WriteLine($"People: {reservation.NumPeople}");
+            Console.WriteLine($"Status: {reservation.Status}");
+            Console.WriteLine($"Date: {reservation.Time:dd/MM/yyyy HH:mm}");
+            Console.WriteLine($"Tables: {tableList}");
+
+            if (!string.IsNullOrWhiteSpace(reservation.Remark))
+                Console.WriteLine($"Remark: {reservation.Remark}");
+
+            if (dishes == null || dishes.Count == 0)
+            {
+                Console.WriteLine("Dishes: —");
+            }
+            else
+            {
+
+                Console.WriteLine("Dishes:");
+
+                var grouped = dishes
+                    .GroupBy(d => d.DishType)
+                    .OrderBy(g => g.Key);
+
+                foreach (var group in grouped)
+                {
+                    Console.Write($"  {group.Key}: ");
+                    Console.WriteLine(string.Join(", ", group.Select(x => x.DishName)));
+                }
+            }
+
+            Console.WriteLine();
+
+            return true;
+        }
     }
 
     public static void PrintReservationFilter(string filterName, string filterValue, bool showHighlight)
@@ -143,9 +171,9 @@ public class ReservationPresentaion
         return text.Length <= maxLength ? text : text.Substring(0, maxLength - 3) + "...";
     }
 
-    public static void PrintReservationConfirm(ReservationModel reservation, List<TablesModel> tables, UsersModel user)
+    public static void PrintReservationConfirm(ReservationModel reservation, List<TablesModel> tables, UsersModel user, List<DishModel> dishes)
     {
-        PrintReservation(reservation, tables, user);
+        PrintReservation(reservation, tables, user, dishes, false);
 
         Console.WriteLine();
         Console.WriteLine("Confirm? (Y/N)");
