@@ -112,7 +112,7 @@ public static class AdminPresentation
                         break;
                     case 2:
                         Console.WriteLine("Menu planner");
-                        themelogic.AddTheme();
+                        ThemeLogic.Themeoverview();
                         break;
                     case 3:
                     
