@@ -394,9 +394,11 @@ public static class AdminPresentation
                 break;
             case 2:
                 Console.WriteLine("Theme Planner"); // deel de maand in
+                ThemeLogic.Themeoverview();
                 break;
             case 3:
                 Console.WriteLine("log out");
+                return false ;
                 break;
             default:
                 Console.WriteLine("Niet geldig!");
