@@ -324,6 +324,8 @@ public class ThemeLogic
                             // System.Console.WriteLine("Geen thema, add");
                             // Thread.Sleep(2000);
 
+                            //testing
+
                             themecalanderaccess.Add(model);
                         }
                         }
