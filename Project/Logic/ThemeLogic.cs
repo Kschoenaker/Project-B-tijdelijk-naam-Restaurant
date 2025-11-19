@@ -300,6 +300,11 @@ public class ThemeLogic
                     break;
 
                 case ConsoleKey.Enter:
+                    if (selectedRow == 13)
+                    {
+                        return;
+                    }
+
                     if (selectedCol == 1 && selectedRow != 0 && year >= 2025)
                     {
                         string theme = Chooseoption();
@@ -379,7 +384,9 @@ public class ThemeLogic
             new List<string> { "September :", "-" },
             new List<string> { "Oktober :", "-" },
             new List<string> { "November :", "-" },
-            new List<string> { "December :", "-" }
+            new List<string> { "December :", "-" },
+            new List<string> { "Back"}
+
         };
 
         for( var  i = 0 ; i < validdates.Count; i++)
