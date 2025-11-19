@@ -487,21 +487,6 @@ public class ReservationLogic
         bool selectedBack = false;
         ConsoleKey key;
 
-        // Prepare data
-        List<TablesModel> allTables = TableLogic.GetAllTables();
-        Dictionary<int, List<TablesModel>> tablesDict = new();
-        Dictionary<int, UsersModel> usersDict = new();
-        for (int i = 0; i < reservations.Count; i++)
-        {
-            List<TableRecordsModel> tableRecords = TableRecordsLogic.GetTableRecordsByReservation(reservations[i].ID);
-
-            List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
-            tablesDict.Add(reservations[i].ID, tablesForReservation);
-
-            UsersModel reservationUser = UserLogic.GetUserByID(reservations[i].Users_ID);
-            usersDict.Add(reservations[i].ID, reservationUser);
-        }
-
         string filterName = "";
         string filterDate = "";
         string filterTable = "";
@@ -514,6 +499,21 @@ public class ReservationLogic
         {
             Console.Clear();
             Header.PrintHeader();
+
+            // Prepare data
+            List<TablesModel> allTables = TableLogic.GetAllTables();
+            Dictionary<int, List<TablesModel>> tablesDict = new();
+            Dictionary<int, UsersModel> usersDict = new();
+            for (int i = 0; i < reservations.Count; i++)
+            {
+                List<TableRecordsModel> tableRecords = TableRecordsLogic.GetTableRecordsByReservation(reservations[i].ID);
+    
+                List<TablesModel> tablesForReservation = allTables.Where(t => tableRecords.Any(tr => tr.Tables_ID == t.ID)).ToList();
+                tablesDict.Add(reservations[i].ID, tablesForReservation);
+    
+                UsersModel reservationUser = UserLogic.GetUserByID(reservations[i].Users_ID);
+                usersDict.Add(reservations[i].ID, reservationUser);
+            }
 
             var filteredReservations = reservations
                 .Where(r => string.IsNullOrEmpty(filterName) || usersDict[r.ID].Name.Contains(filterName, StringComparison.OrdinalIgnoreCase))
@@ -679,6 +679,8 @@ public class ReservationLogic
             Header.PrintHeader();
             bool printCancel = ReservationPresentaion.PrintReservation(reservation, tables, user, dishes);
 
+            if (!printCancel) { return; }
+
             if (reservation.Status == "Cancelled" || !CheckReservationCanBeCancelled(reservation))
             {
                 selectedInt = 1;
@@ -693,26 +695,23 @@ public class ReservationLogic
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    if (printCancel)
+                    if (i == selectedInt)
                     {
-                        if (i == selectedInt)
-                        {
-                            Console.BackgroundColor = ConsoleColor.White;
-                            Console.ForegroundColor = ConsoleColor.Black;
-                        }
-                        else
-                        {
-                            Console.ResetColor();
-                        }
-                        switch (i)
-                        {
-                            case 0:
-                                Console.WriteLine("Cancel reservation");
-                                break;
-                            case 1:
-                                Console.WriteLine("Back");
-                                break;
-                        }
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                    }
+                    else
+                    {
+                        Console.ResetColor();
+                    }
+                    switch (i)
+                    {
+                        case 0:
+                            Console.WriteLine("Cancel reservation");
+                            break;
+                        case 1:
+                            Console.WriteLine("Back");
+                            break;
                     }
                 }
             }
@@ -838,44 +837,21 @@ public class ReservationLogic
     public static void UpdateReservation(
         ReservationModel reservation,
         List<TablesModel> newTables,
-        List<DishModel> newDishSelection)
+        List<DishModel> newDishes)
     {
-        var reservationAccess = new ReservationAccess();
-        var tableRecordsAccess = new TableRecordsAccess();
-        var dishRecordsAccess = new ReservationRecordsAccess();
+        // Update the reservation itself
+        ReservationLogic.UpdateReservationData(reservation);
 
-        // UPDATE reservation data like date, remark, status, etc.
-        reservationAccess.Update(reservation);
+        // Update table links
+        TableRecordsLogic.ReplaceTableRecords(reservation.ID, newTables);
 
-        // Remove old table links
-        var oldTableRecords = tableRecordsAccess.GetByReservation(reservation.ID);
-        foreach (var record in oldTableRecords)
-        {
-            tableRecordsAccess.Delete(record);
-        }
+        // Update dish links
+        ReservationRecordsLogic.ReplaceDishRecords(reservation.ID, newDishes);
+    }
 
-        // Insert new table links
-        foreach (var table in newTables)
-        {
-            var newRecord = new TableRecordsModel(0, table.ID, reservation.ID);
-            tableRecordsAccess.Add(newRecord);
-        }
-
-        // Remove old dish entries
-        var oldDishRecords = dishRecordsAccess.GetAll()
-            .Where(r => r.Reservation_ID == reservation.ID)
-            .ToList();
-
-        foreach (var record in oldDishRecords)
-        {
-            dishRecordsAccess.Delete(record);
-        }
-
-        // Insert new dish entries
-        foreach (var dish in newDishSelection)
-        {
-            var newDishRecord = new ReservationRecordsModel(0, dish.ID, reservation.ID);
-            dishRecordsAccess.Add(newDishRecord);
-        }
+    public static void UpdateReservationData(ReservationModel reservation)
+    {
+        var access = new ReservationAccess();
+        access.Update(reservation);
     }
 }

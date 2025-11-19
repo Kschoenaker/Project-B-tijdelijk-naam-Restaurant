@@ -26,23 +26,23 @@ public class ReservationRecordsLogic
         return dishes;
     }
 
-    public static void UpdateReservationDishes(int reservationId, List<DishModel> newDishes)
+    public static void ReplaceDishRecords(int reservationId, List<DishModel> newDishes)
     {
-        var recordsAccess = new ReservationRecordsAccess();
+        var access = new ReservationRecordsAccess();
 
-        // delete old records
-        var oldRecords = recordsAccess.GetAll()
-            .Where(r => r.Reservation_ID == reservationId)
+        // Delete old
+        var old = access.GetAll()
+            .Where(x => x.Reservation_ID == reservationId)
             .ToList();
 
-        foreach (var rec in oldRecords)
-            recordsAccess.Delete(rec);
+        foreach (var record in old)
+            access.Delete(record);
 
-        // add new records
+        // Add new
         foreach (var dish in newDishes)
         {
-            var newRec = new ReservationRecordsModel(0, dish.ID, reservationId);
-            recordsAccess.Add(newRec);
+            var newRecord = new ReservationRecordsModel(0, dish.ID, reservationId);
+            access.Add(newRecord);
         }
     }
 }

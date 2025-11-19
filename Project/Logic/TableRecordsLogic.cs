@@ -15,4 +15,21 @@ public class TableRecordsLogic
         var tableRecordsAccess = new TableRecordsAccess();
         return tableRecordsAccess.GetByReservation(reservationId);
     }
+
+    public static void ReplaceTableRecords(int reservationId, List<TablesModel> newTables)
+    {
+        var access = new TableRecordsAccess();
+
+        // Delete old
+        var old = access.GetByReservation(reservationId);
+        foreach (var r in old)
+            access.Delete(r);
+
+        // Add new
+        foreach (var t in newTables)
+        {
+            var newRecord = new TableRecordsModel(0, t.ID, reservationId);
+            access.Add(newRecord);
+        }
+    }
 }
