@@ -341,7 +341,7 @@ public static class AdminPresentation
                 case 0:
                     Console.Clear();
                     Console.WriteLine($"=== Nieuw Voorgerecht voor {theme.ThemeName} ===");
-                    AdminPresentation.CreateDish("Voorgerecht", theme);
+                    AdminPresentation.CreateDish();
                     
                     // hier kun je straks de invoer voor een nieuw gerecht doen
                     break;
@@ -349,14 +349,14 @@ public static class AdminPresentation
                 case 1:
                     Console.Clear();
                     Console.WriteLine($"=== Nieuw Hoofdgerecht voor {theme.ThemeName} ===");
-                    AdminPresentation.CreateDish("Hoofdgerecht", theme);
+                    AdminPresentation.CreateDish();
                     // invoer voor hoofdgerecht
                     break;
 
                 case 2:
                     Console.Clear();
                     Console.WriteLine($"=== Nieuw Nagerecht voor {theme.ThemeName} ===");
-                    AdminPresentation.CreateDish("Nagerecht", theme);
+                    AdminPresentation.CreateDish();
                     // invoer voor nagerecht
                     break;
 
@@ -461,7 +461,7 @@ public static class AdminPresentation
 
 
 
-    public static void CreateDish(string dishType, ThemeModel theme)
+    public static void CreateDish()
     {
         Console.Clear();
         Console.WriteLine("=== Nieuw gerecht toevoegen ===");
@@ -472,7 +472,8 @@ public static class AdminPresentation
         Console.Write("Voer de prijs in (bijv. 12.50): ");
         double price = double.Parse(Console.ReadLine().Replace("." , ","));
         
-
+        Console.Write("DishType:");
+        string dishType = Console.ReadLine();
         // Console.Write("Voer het type gerecht in (Voorgerecht / Hoofdgerecht / Nagerecht): ");
         // string type = Console.ReadLine();
 

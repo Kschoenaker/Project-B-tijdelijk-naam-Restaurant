@@ -14,7 +14,7 @@ public static bool DisThemeManagementhMenu(int selectedOption)
                 break;
             case 1:
                 Console.WriteLine("====Dish====");
-                NavigationLogic.NavigateChoices("Dish", ChoiceThemeType);
+                NavigationLogic.NavigateChoices("Dish", DishMenu);
                 break;
             case 2:
                 return false; // go back
@@ -59,7 +59,7 @@ public static bool DishMenu(int selectedOption)
                 break;
             case 1:
                 Console.WriteLine("New Dish");
-                CreateNewTheme();
+                AdminPresentation.CreateDish();
                 break;
             case 2:
                 return false; // go back
