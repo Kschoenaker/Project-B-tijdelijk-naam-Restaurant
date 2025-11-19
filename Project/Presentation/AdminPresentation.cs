@@ -1,8 +1,53 @@
 public static class AdminPresentation
 {
 
-    // you have logged in in the Admin with the admin inlog code
-public static void AdminStartScreen()
+    // you have logged in in the Admin with the admin inlog cod ---------------------------
+    public static bool AdminStartScreen(int selectedOption)
+    {
+        switch (selectedOption)
+        {
+            case 0:
+                Console.WriteLine("See Reservations");
+  
+                break;
+            case 1:
+                Console.WriteLine("Theme Management");
+        
+                break;
+            case 2:
+                Console.WriteLine("Theme Planner");
+                
+                break;
+            case 3:
+                return false; // go back
+                // should go back lo log screen
+        }
+        Console.WriteLine("Press a key to continue...");
+        Console.ReadKey();
+        return true;
+    }
+    public static bool ThemeManagement(int selectedOption)
+    {
+        Console.Clear();
+        switch (selectedOption)
+        {
+            case 0:
+                Console.WriteLine("Theme");
+                //NavigationLogic.NavigateChoices("Theme", ThemePresentation.ChoiceDishType );
+                break;
+            case 1:
+                Console.WriteLine("Dish");
+                NavigationLogic.NavigateChoices("Dish", ThemePresentation.DishMenu );
+                break;
+            case 2:
+                return false; // go back
+                // Go back to admin screen
+        }
+        Console.WriteLine("Press a key to continue...");
+        Console.ReadKey();
+        return true;
+    }
+    public static void AdminStartScreen()
     {
         Console.WriteLine("Welcome Admin");
 
@@ -84,9 +129,7 @@ public static void AdminStartScreen()
             }
         }
     }
-
-    // the theme and menu option screen 
-public static void MenuManagement()
+    public static void MenuManagement()
     {
         Console.WriteLine("Welcome Admin");
 
@@ -164,7 +207,6 @@ public static void MenuManagement()
             }
         }
     }
-
     public static void MakeNewMenu()
     {
         Console.Clear();
@@ -238,9 +280,7 @@ public static void MenuManagement()
             }
         }
     }
-
-
-public static void AddDishesToTheme(ThemeModel theme)
+    public static void AddDishesToTheme(ThemeModel theme)
 {
     Console.Clear();
     Console.WriteLine($"=== Add new dish to Theme: {theme.ThemeName} ===");
@@ -335,6 +375,89 @@ public static void AddDishesToTheme(ThemeModel theme)
         }
     }
 }
+    
+    // --------------------------------------------------------------------------------------NO
+
+
+
+    public static bool AdminMenuManagement(int selectedOption) // als je als admin hebt ingelogt
+    {
+        switch (selectedOption)
+                {
+            case 0:
+                Console.WriteLine("See all reservations");
+                ReservationLogic.HandleSeeAllReservation(); // lijst van alle reservation
+                break;
+            case 1:
+                Console.WriteLine("Theme Management");
+                NavigationLogic.NavigateChoices("ThemeManagement", ThemePresentation.DisThemeManagementhMenu); // making dishes and themes
+                break;
+            case 2:
+                Console.WriteLine("Theme Planner"); // deel de maand in
+                break;
+            case 3:
+                Console.WriteLine("log out");
+                break;
+            default:
+                Console.WriteLine("Niet geldig!");
+                break;
+        }
+
+
+
+        Console.WriteLine("Press a key to continue...");
+        Console.ReadKey();
+        return true;
+    }
+
+    // the theme and menu option screen 
+
+    public static bool DishMenu(int selectedOption)
+    {
+        switch (selectedOption)
+        {
+            //PrintToScreen["AdminMenu"] = new List<string> { "See Reservations", "Theme Management", "Theme Planner", "Log out" };
+            case 0:
+                Console.WriteLine("Dish Overview");
+                // gaat naar een list van themes formatted
+                AdminPresentation.TestTheme();
+                break;
+            case 1:
+                Console.WriteLine("New Dish");
+                break;
+            case 2:
+                return false; // go back
+        }
+        Console.WriteLine("Press a key to continue...");
+        Console.ReadKey();
+        return true;
+    }
+
+
+    public static bool ChoiceThemeType(int selectedOption)
+        {
+            switch (selectedOption)
+            {
+                case 0:
+                    Console.WriteLine("Edit theme");
+                    // gaat naar een list van themes formatted
+                    AdminPresentation.TestTheme();
+                    break;
+                case 1:
+                    Console.WriteLine("Add new theme");
+                    // vraagt om een nieuwe nieuwe thwmw
+                    //CreateNewTheme();
+                    break;
+                case 2:
+                    return false; // go back
+            }
+            Console.WriteLine("Press a key to continue...");
+            Console.ReadKey();
+            return true;
+        }
+
+
+
 
     public static void CreateDish(string dishType, ThemeModel theme)
     {
@@ -369,5 +492,28 @@ public static void AddDishesToTheme(ThemeModel theme)
 
     }
 
- 
+    public static void themeTabel(List<ThemeModel> themes)
+    {
+        
+        var themetable = new TableUI<ThemeModel>("Themes Menu's",
+        new Dictionary<string, string>
+        {
+            {"ThemeName", "Theme Name"}
+        },
+        themes,
+        new List<string> {"ThemeName"});
+
+        themetable.Start();
+
+    }
+
+    public static void TestTheme()
+    {
+        List<ThemeModel> themeModels = ThemeLogic.AllThemes();
+        themeTabel(themeModels);
+    }
+
+
+
+
 }

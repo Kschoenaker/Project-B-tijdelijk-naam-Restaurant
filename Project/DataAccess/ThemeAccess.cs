@@ -70,6 +70,13 @@ public class ThemeAccess
     string sql = $"SELECT ThemeName FROM {Table}";
     return _connection.Query<string>(sql).ToList();
     }
+    
+    public List<ThemeModel> GetAllThemes()
+    {
+    string sql = $"SELECT * FROM {Table}";
+    return  _connection.Query<ThemeModel>(sql).ToList();
+    }
+
 
 
 
